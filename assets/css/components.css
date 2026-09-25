@@ -1,0 +1,431 @@
+/* M'CHASHMA Eyewear - 3D Interactive Components & Design System */
+
+/* =========================================
+   BUTTONS (Depth, 3D effect, rounded corners, hover pop)
+   ========================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.98rem;
+  letter-spacing: 0.02em;
+  padding: 13px 26px;
+  border-radius: var(--radius-md);
+  position: relative;
+  text-align: center;
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.18s ease,
+              background-color 0.18s ease,
+              filter 0.18s ease;
+  white-space: nowrap;
+}
+
+/* 3D Depth & Hover Pop Effect */
+.btn:hover {
+  transform: translateY(-4px) scale(1.02);
+}
+
+.btn:active {
+  transform: translateY(2px) scale(0.99);
+}
+
+/* Primary Brand Red 3D Button */
+.btn-primary {
+  background: linear-gradient(135deg, #F43F5E 0%, #E11D48 60%, #BE123C 100%);
+  color: #FFFFFF;
+  box-shadow: 0 6px 0 #9F1239, 0 10px 20px rgba(225, 29, 72, 0.35);
+}
+.btn-primary:hover {
+  box-shadow: 0 8px 0 #9F1239, 0 14px 28px rgba(225, 29, 72, 0.45);
+  filter: brightness(1.05);
+}
+.btn-primary:active {
+  box-shadow: 0 2px 0 #9F1239, 0 4px 8px rgba(225, 29, 72, 0.3);
+}
+
+/* Store Merchandising Yellow 3D Button */
+.btn-yellow {
+  background: linear-gradient(135deg, #FDE047 0%, #F59E0B 70%, #D97706 100%);
+  color: #0F172A;
+  font-weight: 700;
+  box-shadow: 0 6px 0 #B45309, 0 10px 20px rgba(245, 158, 11, 0.35);
+}
+.btn-yellow:hover {
+  box-shadow: 0 8px 0 #B45309, 0 14px 28px rgba(245, 158, 11, 0.5);
+  filter: brightness(1.05);
+}
+.btn-yellow:active {
+  box-shadow: 0 2px 0 #B45309, 0 4px 8px rgba(245, 158, 11, 0.3);
+}
+
+/* Architectural Charcoal 3D Button */
+.btn-charcoal {
+  background: linear-gradient(135deg, #334155 0%, #1E293B 70%, #0F172A 100%);
+  color: #FFFFFF;
+  box-shadow: 0 6px 0 #020617, 0 10px 20px rgba(15, 23, 42, 0.25);
+}
+.btn-charcoal:hover {
+  box-shadow: 0 8px 0 #020617, 0 14px 28px rgba(15, 23, 42, 0.35);
+}
+.btn-charcoal:active {
+  box-shadow: 0 2px 0 #020617, 0 4px 8px rgba(15, 23, 42, 0.2);
+}
+
+/* Premium Glass & White 3D Button */
+.btn-glass {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-glass);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 5px 0 var(--border-subtle), 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+.btn-glass:hover {
+  background: var(--bg-primary);
+  border-color: var(--brand-red);
+  box-shadow: 0 7px 0 var(--border-strong), 0 12px 24px rgba(0, 0, 0, 0.12);
+  color: var(--brand-red);
+}
+.btn-glass:active {
+  box-shadow: 0 2px 0 var(--border-subtle), 0 4px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Outline 3D Button */
+.btn-outline {
+  background: transparent;
+  color: var(--text-primary);
+  border: 2px solid var(--border-strong);
+  box-shadow: 0 4px 0 var(--border-strong);
+}
+.btn-outline:hover {
+  border-color: var(--brand-red);
+  color: var(--brand-red);
+  box-shadow: 0 6px 0 var(--brand-red);
+}
+.btn-outline:active {
+  box-shadow: 0 1px 0 var(--brand-red);
+}
+
+/* Icon Button (Round with 3D pop) */
+.btn-icon {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 4px 0 var(--border-subtle), 0 6px 12px rgba(0,0,0,0.06);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background 0.2s;
+}
+.btn-icon:hover {
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 6px 0 var(--border-strong), 0 10px 18px rgba(0,0,0,0.12);
+  color: var(--brand-red);
+}
+.btn-icon:active {
+  transform: translateY(2px) scale(0.96);
+  box-shadow: 0 1px 0 var(--border-subtle);
+}
+
+/* Button Sizes */
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+}
+.btn-lg {
+  padding: 16px 36px;
+  font-size: 1.12rem;
+  border-radius: var(--radius-lg);
+}
+
+/* =========================================
+   POP LINKS (Slide 2 requirement: links should pop on hover)
+   ========================================= */
+.pop-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s, background 0.2s;
+}
+.pop-link:hover {
+  transform: translateY(-2px) scale(1.05);
+  color: var(--brand-red);
+  background: var(--bg-tertiary);
+}
+
+/* =========================================
+   BADGES & PILLS
+   ========================================= */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  line-height: 1;
+}
+
+.badge-sale {
+  background: var(--brand-red);
+  color: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(225, 29, 72, 0.4);
+}
+
+.badge-yellow {
+  background: var(--brand-yellow);
+  color: #0F172A;
+  font-weight: 800;
+  box-shadow: 0 2px 8px var(--brand-yellow-glow);
+}
+
+.badge-zeiss {
+  background: #004593;
+  color: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(0, 69, 147, 0.4);
+}
+
+.badge-new {
+  background: #10B981;
+  color: #FFFFFF;
+}
+
+.badge-charcoal {
+  background: var(--brand-charcoal);
+  color: #FFFFFF;
+}
+
+/* =========================================
+   CARD DEPTH & 3D HOVER LIFT
+   ========================================= */
+.card-3d {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.3s ease,
+              border-color 0.3s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.card-3d:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: var(--shadow-xl), 0 0 0 2px var(--brand-yellow-glow);
+  border-color: var(--brand-yellow);
+}
+
+/* Optical Display Backlit Glow (Store Theme) */
+.optical-glow {
+  position: relative;
+}
+.optical-glow::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(135deg, var(--brand-yellow), transparent 60%, var(--brand-red));
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.optical-glow:hover::after {
+  opacity: 1;
+}
+
+/* =========================================
+   FORM CONTROLS (Rounded, High Contrast)
+   ========================================= */
+.form-group {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.form-input, .form-select {
+  width: 100%;
+  padding: 13px 18px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.form-input:focus, .form-select:focus {
+  border-color: var(--brand-red);
+  background: var(--bg-primary);
+  box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.15);
+}
+
+/* =========================================
+   MODAL BACKDROP & DIALOG
+   ========================================= */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s ease;
+}
+
+.modal-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-dialog {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl), 0 0 60px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 780px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  transform: translateY(30px) scale(0.96);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-backdrop.active .modal-dialog {
+  transform: translateY(0) scale(1);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  z-index: 10;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s, color 0.2s;
+}
+.modal-close-btn:hover {
+  transform: rotate(90deg) scale(1.1);
+  background: var(--brand-red);
+  color: #FFFFFF;
+}
+
+/* =========================================
+   SLIDE-OUT DRAWER (Cart, Account)
+   ========================================= */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  z-index: 990;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.drawer-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 480px;
+  background: var(--bg-card);
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.25);
+  z-index: 995;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.drawer-backdrop.active + .drawer-panel,
+.drawer-panel.active {
+  transform: translateX(0);
+}
+
+/* =========================================
+   TOAST NOTIFICATION (Optical Feedback)
+   ========================================= */
+.toast-container {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 1200;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--brand-charcoal-dark);
+  color: #FFFFFF;
+  padding: 14px 22px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), 0 0 0 1px var(--border-glass);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  pointer-events: auto;
+  transform: translateY(20px) scale(0.9);
+  opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+  border-left: 4px solid var(--brand-yellow);
+}
+
+.toast.show {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.toast.toast-success {
+  border-left-color: #10B981;
+}
+
+.toast.toast-danger {
+  border-left-color: var(--brand-red);
+}

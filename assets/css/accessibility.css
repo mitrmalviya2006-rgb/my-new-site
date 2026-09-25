@@ -1,0 +1,262 @@
+/* M'CHASHMA Eyewear - Universal Accessibility (WCAG 2.1 AA/AAA) System */
+
+/* 1. Skip to Main Content Link */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 20px;
+  background: var(--brand-red);
+  color: #FFFFFF;
+  padding: 14px 24px;
+  font-weight: 800;
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  z-index: 10000;
+  transition: top 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.skip-link:focus {
+  top: 20px;
+  outline: 4px solid var(--brand-yellow);
+}
+
+/* 2. Enhanced Focus Visible for Keyboard Users */
+:focus-visible {
+  outline: 3.5px solid var(--brand-red) !important;
+  outline-offset: 3.5px !important;
+  border-radius: var(--radius-xs);
+}
+
+/* 3. Font Size Scaling */
+html[data-font-size="large"] {
+  font-size: 18px;
+}
+html[data-font-size="xlarge"] {
+  font-size: 20px;
+}
+html[data-font-size="huge"] {
+  font-size: 22px;
+}
+
+/* 4. Dyslexia-Friendly Legibility Mode */
+html[data-dyslexia="true"] body,
+html[data-dyslexia="true"] button,
+html[data-dyslexia="true"] input,
+html[data-dyslexia="true"] select {
+  font-family: 'Verdana', 'Segoe UI', 'Trebuchet MS', sans-serif !important;
+  letter-spacing: 0.05em !important;
+  word-spacing: 0.1em !important;
+  line-height: 1.85 !important;
+}
+
+/* 5. Enhanced Text Spacing */
+html[data-text-spacing="true"] body {
+  letter-spacing: 0.08em !important;
+  word-spacing: 0.16em !important;
+  line-height: 1.95 !important;
+}
+
+/* 6. High Contrast Modes */
+
+/* Ultra High Contrast Dark */
+html[data-contrast="high-dark"] {
+  --bg-primary: #000000 !important;
+  --bg-secondary: #0A0A0A !important;
+  --bg-tertiary: #171717 !important;
+  --bg-card: #0A0A0A !important;
+  --bg-surface: #000000 !important;
+  --text-primary: #FFFFFF !important;
+  --text-secondary: #E5E5E5 !important;
+  --text-muted: #D4D4D4 !important;
+  --border-subtle: #FFFFFF !important;
+  --border-strong: #FFFFFF !important;
+  --brand-yellow: #FFFF00 !important;
+  --brand-red: #FF3366 !important;
+}
+
+/* High Contrast Yellow on Black (Optical Standard Low Vision Mode) */
+html[data-contrast="yellow-black"] {
+  --bg-primary: #000000 !important;
+  --bg-secondary: #0D0D0D !important;
+  --bg-tertiary: #1A1A1A !important;
+  --bg-card: #0D0D0D !important;
+  --bg-surface: #000000 !important;
+  --text-primary: #FFFF00 !important;
+  --text-secondary: #FFFF66 !important;
+  --text-muted: #FFFF99 !important;
+  --border-subtle: #FFFF00 !important;
+  --border-strong: #FFFF00 !important;
+  --brand-yellow: #FFFF00 !important;
+  --brand-red: #FFFF00 !important;
+}
+
+/* Monochrome / Grayscale Comfort Mode */
+html[data-contrast="monochrome"] {
+  filter: grayscale(100%) !important;
+}
+
+/* 7. Big High-Visibility Cursor */
+html[data-big-cursor="true"] *,
+html[data-big-cursor="true"] *::before,
+html[data-big-cursor="true"] *::after {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><polygon points="4,4 18,44 26,28 42,26" fill="%230F172A" stroke="%23FBBF24" stroke-width="3"/></svg>'), auto !important;
+}
+
+/* 8. Reading Guide Highlight Line */
+.reading-guide-line {
+  position: fixed;
+  left: 0;
+  width: 100vw;
+  height: 38px;
+  background: rgba(251, 191, 36, 0.22);
+  border-top: 2px solid var(--brand-yellow);
+  border-bottom: 2px solid var(--brand-yellow);
+  pointer-events: none;
+  z-index: 9998;
+  display: none;
+  transform: translateY(-50%);
+  transition: top 0.05s ease-out;
+}
+
+.reading-guide-line.active {
+  display: block;
+}
+
+/* 9. Floating Accessibility Widget Button */
+.accessibility-launcher {
+  position: fixed;
+  bottom: 28px;
+  left: 28px;
+  z-index: 850;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.accessibility-launcher-btn {
+  width: 54px;
+  height: 54px;
+  border-radius: var(--radius-full);
+  background: #004593; /* Optical Zeiss Blue */
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 8px 25px rgba(0, 69, 147, 0.4);
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+}
+
+.accessibility-launcher-btn:hover {
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 12px 30px rgba(0, 69, 147, 0.6);
+}
+
+.accessibility-launcher-btn:active {
+  transform: translateY(2px) scale(0.96);
+}
+
+/* 10. Accessibility Modal Panel */
+.accessibility-modal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.a11y-feature-card {
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.2s;
+}
+
+.a11y-feature-card:hover {
+  border-color: var(--brand-yellow);
+}
+
+.a11y-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.a11y-btn-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.a11y-btn {
+  padding: 7px 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-strong);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.a11y-btn:hover, .a11y-btn.active {
+  background: var(--brand-red);
+  color: #FFFFFF;
+  border-color: var(--brand-red);
+}
+
+/* Live Screen Reader Announcement Box (Visually Hidden) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Language Switcher Styling */
+.lang-switcher {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  gap: 4px;
+}
+
+.lang-btn {
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.lang-btn.active {
+  background: var(--brand-red);
+  color: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(225, 29, 72, 0.3);
+}
+
+@media (max-width: 768px) {
+  .accessibility-modal-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,360 @@
+/* M'CHASHMA Eyewear - Virtual Try-On Live Camera Studio */
+
+.tryon-section {
+  padding: 80px 0;
+  background: var(--bg-secondary);
+  position: relative;
+  overflow: hidden;
+}
+
+.tryon-studio-container {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 36px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 36px;
+  box-shadow: var(--shadow-xl);
+  position: relative;
+}
+
+/* Watermark Brand Logo in Try-On Area */
+.tryon-watermark {
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.85;
+  z-index: 10;
+}
+
+.tryon-watermark img {
+  height: 34px;
+  width: auto;
+}
+
+/* Viewport / Stage */
+.tryon-viewport-wrapper {
+  position: relative;
+  background: #000000;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+.tryon-video-feed {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); /* Mirror camera for natural look */
+  display: none;
+}
+
+.tryon-video-feed.active {
+  display: block;
+}
+
+.tryon-canvas-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+  cursor: grab;
+  z-index: 5;
+}
+
+.tryon-canvas-overlay:active {
+  cursor: grabbing;
+}
+
+.tryon-photo-fallback {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Oval Face Position Guide */
+.tryon-face-guide {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 220px;
+  height: 300px;
+  border: 2px dashed rgba(251, 191, 36, 0.7);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 20px;
+  transition: opacity 0.3s;
+}
+
+.tryon-face-guide.hidden {
+  opacity: 0;
+}
+
+.face-guide-text {
+  background: rgba(15, 23, 42, 0.85);
+  color: #FEF08A;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Eye alignment line across guide */
+.face-guide-eyeline {
+  position: absolute;
+  top: 42%;
+  left: 15%;
+  right: 15%;
+  height: 1.5px;
+  background: rgba(225, 29, 72, 0.75);
+}
+
+/* Permission Request Banner / Fallback Notice */
+.tryon-consent-card {
+  position: absolute;
+  inset: 20px;
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #FFFFFF;
+  z-index: 12;
+  transition: opacity 0.3s;
+}
+
+.tryon-consent-card.hidden {
+  display: none;
+}
+
+.tryon-consent-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-full);
+  background: var(--brand-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  margin-bottom: 16px;
+  box-shadow: 0 0 25px rgba(225, 29, 72, 0.5);
+}
+
+.tryon-consent-title {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.tryon-consent-desc {
+  font-size: 0.9rem;
+  color: #CBD5E1;
+  max-width: 420px;
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+
+.tryon-privacy-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  color: #94A3B8;
+  margin-top: 14px;
+}
+
+/* Control Panel (Right Side) */
+.tryon-controls-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.tryon-panel-header {
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 16px;
+}
+
+.tryon-panel-title {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.tryon-panel-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+/* Mode Switcher Tabs (Live Camera vs Photo Model vs Upload) */
+.tryon-mode-tabs {
+  display: flex;
+  gap: 8px;
+  background: var(--bg-tertiary);
+  padding: 5px;
+  border-radius: var(--radius-md);
+}
+
+.tryon-mode-btn {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.tryon-mode-btn.active {
+  background: var(--bg-card);
+  color: var(--brand-red);
+  box-shadow: var(--shadow-xs);
+}
+
+/* Model Face Picker */
+.tryon-model-picker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tryon-model-thumb {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--border-subtle);
+  object-fit: cover;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tryon-model-thumb:hover, .tryon-model-thumb.active {
+  transform: scale(1.12);
+  border-color: var(--brand-red);
+  box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.2);
+}
+
+/* Frame Selection Carousel / Grid */
+.tryon-frames-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.tryon-frame-item {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tryon-frame-item:hover, .tryon-frame-item.active {
+  border-color: var(--brand-red);
+  background: var(--bg-card);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-sm);
+}
+
+.tryon-frame-item img {
+  width: 100%;
+  max-height: 38px;
+  object-fit: contain;
+  margin-bottom: 6px;
+}
+
+.tryon-frame-item-name {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+/* Interactive Adjustments (Sliders: Size, Angle, Reset) */
+.tryon-sliders-block {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--bg-secondary);
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+}
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.slider-label {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 90px;
+}
+
+.slider-control {
+  flex: 1;
+  accent-color: var(--brand-red);
+  cursor: pointer;
+}
+
+.slider-value {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  min-width: 38px;
+  text-align: right;
+}
+
+/* Action Buttons (Snapshot, Add to Cart, Guide Toggle) */
+.tryon-actions-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 992px) {
+  .tryon-studio-container {
+    grid-template-columns: 1fr;
+  }
+}
