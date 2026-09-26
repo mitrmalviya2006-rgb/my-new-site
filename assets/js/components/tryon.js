@@ -116,10 +116,12 @@ export function initTryOn() {
     });
   });
 
-  // Slider Adjustments
+  // Slider Adjustments – these now fine‑tune the auto‑computed AR values
   if (scaleSlider) {
     scaleSlider.addEventListener("input", (e) => {
-      transform.scale = parseFloat(e.target.value);
+      // User‑driven scale multiplier (relative to computed scale)
+      const userScale = parseFloat(e.target.value);
+      transform.scale = userScale;
       if (scaleValEl) scaleValEl.textContent = `${Math.round(transform.scale * 100)}%`;
       draw();
     });
@@ -239,6 +241,13 @@ export function initTryOn() {
         video.classList.add("active");
       }
 
+      // Lazy‑load MediaPipe FaceMesh wrapper and start tracking
+      if (!window._faceTracker) {
+        const module = await import("./faceTracker.js");
+        window._faceTracker = module;
+      }
+      window._faceTracker.start(video, handleFaceResults);
+
       if (fallbackImg) fallbackImg.style.display = "none";
       if (consentCard) consentCard.classList.add("hidden");
       isCameraActive = true;
@@ -248,6 +257,52 @@ export function initTryOn() {
       showCameraError("Camera permission was denied or camera device is in use. We've switched you to our high-resolution model preview.");
       useFallbackPhoto();
     }
+  }
+
+  // Process MediaPipe results and update the frame transform
+  function handleFaceResults(results) {
+    if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) return;
+    const landmarks = results.multiFaceLandmarks[0];
+    const w = canvas.width;
+    const h = canvas.height;
+
+    const leftEye = landmarks[33];
+    const rightEye = landmarks[263];
+    const nose = landmarks[1];
+
+    const lx = leftEye.x * w;
+    const ly = leftEye.y * h;
+    const rx = rightEye.x * w;
+    const ry = rightEye.y * h;
+    const nx = nose.x * w;
+    const ny = nose.y * h;
+
+    const cx = (lx + rx) / 2;
+    const cy = (ly + ry) / 2;
+
+    const eyeDist = Math.hypot(rx - lx, ry - ly);
+    const baseEyeDist = w * 0.58;
+    const computedScale = eyeDist / baseEyeDist;
+
+    const angleRad = Math.atan2(ry - ly, rx - lx);
+    const computedRot = angleRad * 180 / Math.PI;
+
+    const offsetX = (cx - w / 2) * (400 / w);
+    const offsetY = (cy - h / 2) * (400 / h);
+
+    transform.x = offsetX;
+    transform.y = offsetY;
+    transform.scale = computedScale;
+    transform.rotation = computedRot;
+
+    if (scaleSlider) scaleSlider.value = transform.scale.toFixed(2);
+    if (scaleValEl) scaleValEl.textContent = `${Math.round(transform.scale * 100)}%`;
+    if (rotateSlider) rotateSlider.value = Math.round(transform.rotation);
+    if (rotateValEl) rotateValEl.textContent = `${Math.round(transform.rotation)}°`;
+    if (posYSlider) posYSlider.value = Math.round(transform.y);
+    if (posYValEl) posYValEl.textContent = `${Math.round(transform.y)}px`;
+
+    draw();
   }
 
   function showCameraError(msg) {
