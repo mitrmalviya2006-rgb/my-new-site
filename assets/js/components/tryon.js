@@ -38,6 +38,11 @@ export function initTryOn() {
     rotation: 0 // degrees
   };
 
+  // User‑adjustable overrides (default neutral values)
+  let userScale = 1;   // multiplier for computed scale
+  let userRot   = 0;   // additive rotation offset (degrees)
+  let userY     = 0;   // additive vertical offset (px)
+
   let transform = { ...defaultTransform };
 
   // Drag interaction state
@@ -120,25 +125,25 @@ export function initTryOn() {
   if (scaleSlider) {
     scaleSlider.addEventListener("input", (e) => {
       // User‑driven scale multiplier (relative to computed scale)
-      const userScale = parseFloat(e.target.value);
-      transform.scale = userScale;
-      if (scaleValEl) scaleValEl.textContent = `${Math.round(transform.scale * 100)}%`;
+      userScale = parseFloat(e.target.value);
+      if (scaleValEl) scaleValEl.textContent = `${Math.round(userScale * 100)}%`;
+      // Re‑apply transform with current computed values (will be updated in handleFaceResults)
       draw();
     });
   }
 
   if (rotateSlider) {
     rotateSlider.addEventListener("input", (e) => {
-      transform.rotation = parseFloat(e.target.value);
-      if (rotateValEl) rotateValEl.textContent = `${transform.rotation}°`;
+      userRot = parseFloat(e.target.value);
+      if (rotateValEl) rotateValEl.textContent = `${userRot}°`;
       draw();
     });
   }
 
   if (posYSlider) {
     posYSlider.addEventListener("input", (e) => {
-      transform.y = parseFloat(e.target.value);
-      if (posYValEl) posYValEl.textContent = `${transform.y}px`;
+      userY = parseFloat(e.target.value);
+      if (posYValEl) posYValEl.textContent = `${userY}px`;
       draw();
     });
   }
@@ -147,6 +152,9 @@ export function initTryOn() {
   if (resetBtn) {
     resetBtn.addEventListener("click", () => {
       transform = { ...defaultTransform };
+      userScale = 1;
+      userRot = 0;
+      userY = 0;
       if (scaleSlider) scaleSlider.value = 1.0;
       if (scaleValEl) scaleValEl.textContent = "100%";
       if (rotateSlider) rotateSlider.value = 0;
@@ -290,17 +298,19 @@ export function initTryOn() {
     const offsetX = (cx - w / 2) * (400 / w);
     const offsetY = (cy - h / 2) * (400 / h);
 
+    // Apply user adjustments on top of computed values
     transform.x = offsetX;
-    transform.y = offsetY;
-    transform.scale = computedScale;
-    transform.rotation = computedRot;
+    transform.y = offsetY + userY;
+    transform.scale = computedScale * userScale;
+    transform.rotation = computedRot + userRot;
 
-    if (scaleSlider) scaleSlider.value = transform.scale.toFixed(2);
-    if (scaleValEl) scaleValEl.textContent = `${Math.round(transform.scale * 100)}%`;
-    if (rotateSlider) rotateSlider.value = Math.round(transform.rotation);
-    if (rotateValEl) rotateValEl.textContent = `${Math.round(transform.rotation)}°`;
-    if (posYSlider) posYSlider.value = Math.round(transform.y);
-    if (posYValEl) posYValEl.textContent = `${Math.round(transform.y)}px`;
+    // Sync UI sliders (show current user overrides)
+    if (scaleSlider) scaleSlider.value = userScale.toFixed(2);
+    if (scaleValEl) scaleValEl.textContent = `${Math.round(userScale * 100)}%`;
+    if (rotateSlider) rotateSlider.value = Math.round(userRot);
+    if (rotateValEl) rotateValEl.textContent = `${userRot}°`;
+    if (posYSlider) posYSlider.value = Math.round(userY);
+    if (posYValEl) posYValEl.textContent = `${Math.round(userY)}px`;
 
     draw();
   }
