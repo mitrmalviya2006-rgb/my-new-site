@@ -1,0 +1,67 @@
+{
+ "summary": {
+  "nodes": 15,
+  "members": 39,
+  "rigidity_rank": 39,
+  "isostatic_count": 39,
+  "redundant_members": 0,
+  "tube_length_mm": {
+   "S": 12975.0,
+   "M": 320.0,
+   "H": 140.0
+  },
+  "tube_mass_kg": 9.81,
+  "min_stiffness_eig": 28.92976553378282,
+  "support_reaction_max_N": {
+   "static": 0.0,
+   "bump_3g": 0.0,
+   "brake_1g": 0.0
+  },
+  "min_sf_yield": 3.76,
+  "min_sf_buckle": 6.47,
+  "failing_members": [],
+  "min_gap_to_engine_mm": 26.8,
+  "cases": {
+   "static": {
+    "R_front_N": 1039.735314144818,
+    "R_rear_N": 1018.4695106821479,
+    "Fx_front_N": -0.0,
+    "shock_axial_N": 2320.6408820132024,
+    "total_mass_kg": 209.806811908967
+   },
+   "bump_3g": {
+    "R_front_N": 3119.2059424344543,
+    "R_rear_N": 3055.408532046444,
+    "Fx_front_N": -0.0,
+    "shock_axial_N": 6961.922646039609,
+    "total_mass_kg": 209.806811908967
+   },
+   "brake_1g": {
+    "R_front_N": 1933.628872893799,
+    "R_rear_N": 124.57595193316683,
+    "Fx_front_N": -2058.204824826966,
+    "shock_axial_N": 283.8534133222983,
+    "total_mass_kg": 209.806811908967
+   }
+  },
+  "extent_mm": {
+   "x": [
+    -120.0,
+    658.0
+   ],
+   "y": [
+    -235.0,
+    235.0
+   ],
+   "z": [
+    -150.0,
+    430.0
+   ]
+  },
+  "u_max_mm": {
+   "static": 0.18623434270429737,
+   "bump_3g": 0.5587030281128912,
+   "brake_1g": 0.2291383930874088
+  }
+ }
+}

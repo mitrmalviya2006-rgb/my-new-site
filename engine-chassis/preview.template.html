@@ -1,0 +1,468 @@
+<title>Truss Chassis Viewer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one working viewport (3D canvas) beside an instrument panel; stacks on phones. */
+:root {
+  --bg: #e9ecf0;
+  --panel: #f7f8fa;
+  --ink: #17202b;
+  --muted: #566170;
+  --line: #cbd2da;
+  --accent: #17202b;
+  --tension: #1d5fd1;
+  --compress: #d4470c;
+  --neutral: #8792a1;
+  --engine: #139a86;
+  --scene-bg: #dfe4ea;
+  --grid-a: #b7c0cb;
+  --grid-b: #cdd4dc;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1218; --panel: #151c25; --ink: #e5eaf1; --muted: #93a0b0; --line: #29323f;
+    --accent: #e5eaf1; --tension: #5f9dff; --compress: #ff8d52; --neutral: #6c7787; --engine: #2fc7ad;
+    --scene-bg: #10161d; --grid-a: #2b3541; --grid-b: #1d252f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1218; --panel: #151c25; --ink: #e5eaf1; --muted: #93a0b0; --line: #29323f;
+  --accent: #e5eaf1; --tension: #5f9dff; --compress: #ff8d52; --neutral: #6c7787; --engine: #2fc7ad;
+  --scene-bg: #10161d; --grid-a: #2b3541; --grid-b: #1d252f;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 14px; line-height: 1.45;
+  padding-block: 16px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1320px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 20px; }
+h1 { font-size: 20px; font-weight: 600; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+.sub { color: var(--muted); font-size: 13px; margin: 0; max-width: 70ch; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 14px; align-items: start; }
+.stage {
+  position: relative; background: var(--scene-bg); border: 1px solid var(--line); border-radius: 6px;
+  height: min(72vh, 720px); min-height: 360px; overflow: hidden; touch-action: none;
+}
+.stage canvas { display: block; width: 100%; height: 100%; }
+#labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.lbl { position: absolute; transform: translate(6px, -50%); font: 500 10px/1 var(--font-mono); color: var(--muted); white-space: nowrap; }
+.lbl.rider { color: var(--engine); }
+.views { position: absolute; left: 10px; top: 10px; display: flex; gap: 4px; flex-wrap: wrap; }
+.axes { position: absolute; right: 10px; bottom: 8px; font: 400 11px var(--font-mono); color: var(--muted); text-align: right; pointer-events: none; }
+.legend { position: absolute; left: 10px; bottom: 10px; right: 140px; display: flex; flex-direction: column; gap: 4px; font: 400 11px var(--font-mono); color: var(--muted); pointer-events: none; }
+.bar { height: 8px; border-radius: 2px; background: linear-gradient(90deg, var(--compress), var(--neutral) 50%, var(--tension)); max-width: 260px; }
+.bar.size { background: linear-gradient(90deg, var(--neutral) 0 50%, var(--ink) 50%); }
+.legend .ends { display: flex; justify-content: space-between; max-width: 260px; }
+button, label.chk {
+  font: inherit; color: var(--ink);
+}
+button {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 5px 10px; cursor: pointer; font-size: 12px;
+}
+button:hover { border-color: var(--muted); }
+button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+button:focus-visible, input:focus-visible, tr:focus-visible { outline: 2px solid var(--tension); outline-offset: 2px; }
+aside { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; min-width: 0; }
+h2 { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+.seg { display: flex; flex-wrap: wrap; gap: 4px; }
+.checks { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+label.chk { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
+dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font-size: 13px; }
+dt { color: var(--muted); }
+dd { margin: 0; text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.readout { min-height: 120px; }
+.readout .id { font: 600 15px var(--font-mono); margin-bottom: 6px; }
+.readout .hint { color: var(--muted); font-size: 13px; }
+.f-t { color: var(--tension); } .f-c { color: var(--compress); }
+.tablewrap { max-height: 300px; overflow: auto; border: 1px solid var(--line); border-radius: 4px; }
+table { border-collapse: collapse; width: 100%; font: 400 12px var(--font-mono); font-variant-numeric: tabular-nums; }
+th { position: sticky; top: 0; background: var(--panel); text-align: right; font: 600 10px var(--font-body); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 5px 8px; border-bottom: 1px solid var(--line); }
+th:first-child, td:first-child { text-align: left; }
+td { text-align: right; padding: 3px 8px; border-bottom: 1px solid var(--line); }
+tr.row { cursor: pointer; }
+tr.row:hover td { background: color-mix(in srgb, var(--neutral) 14%, transparent); }
+tr.row.sel td { background: color-mix(in srgb, var(--tension) 18%, transparent); }
+.note { color: var(--muted); font-size: 12px; margin: 0; max-width: 90ch; }
+.files { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 400 12px var(--font-mono); color: var(--muted); margin: 0; }
+@media (max-width: 860px) {
+  .grid { grid-template-columns: minmax(0, 1fr); }
+  .stage { height: 58vh; min-height: 320px; }
+  .legend { right: 10px; bottom: 28px; }
+  .axes { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Truss Chassis Viewer</h1>
+    <p class="sub">Minimal triangulated motorcycle frame for a 349cc liquid-cooled single. The engine is a placeholder box; mount nodes E, F and P move when the real engine exists.</p>
+  </header>
+
+  <div class="grid">
+    <div class="stage" id="stage">
+      <canvas id="cv" aria-label="3D view of the truss chassis"></canvas>
+      <div id="labels"></div>
+      <div class="views" role="group" aria-label="Camera view">
+        <button type="button" data-view="iso">3D</button>
+        <button type="button" data-view="side">Side</button>
+        <button type="button" data-view="top">Top</button>
+        <button type="button" data-view="front">Front</button>
+      </div>
+      <div class="legend" id="legend"></div>
+      <div class="axes">x forward · y left · z up<br>origin = swingarm pivot, mm</div>
+    </div>
+
+    <aside>
+      <section class="card">
+        <h2>Colour members by</h2>
+        <div class="seg" id="cases" role="group" aria-label="Load case">
+          <button type="button" data-case="size">Tube size</button>
+          <button type="button" data-case="static" aria-pressed="true">Static 1 g</button>
+          <button type="button" data-case="bump_3g">Bump 3 g</button>
+          <button type="button" data-case="brake_1g">Braking 1 g</button>
+        </div>
+        <div class="checks">
+          <label class="chk"><input type="checkbox" id="t-engine" checked> Engine envelope (placeholder)</label>
+          <label class="chk"><input type="checkbox" id="t-wheels" checked> Wheels, swingarm, fork, shock</label>
+          <label class="chk"><input type="checkbox" id="t-rider" checked> Rider triangle</label>
+          <label class="chk"><input type="checkbox" id="t-labels"> Node labels</label>
+        </div>
+      </section>
+
+      <section class="card readout" id="readout" aria-live="polite">
+        <h2>Member</h2>
+        <div class="hint">Hover or tap a tube, or pick a row below.</div>
+      </section>
+
+      <section class="card">
+        <h2>Frame</h2>
+        <dl id="summary"></dl>
+      </section>
+    </aside>
+  </div>
+
+  <section class="card">
+    <h2>All members, largest force first</h2>
+    <div class="tablewrap" tabindex="0" aria-label="Member table">
+      <table>
+        <thead><tr><th>Member</th><th>Tube mm</th><th>Length</th><th>Worst N</th><th>SF yield</th><th>SF buckle</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="note">Analysis treats every joint as a pin: members carry axial load only, and seat, tank, pegs, shock and engine load the nodes. Welded joints, lateral loads and cornering are not modelled, and the engine mounts are placeholders. A frame that carries a rider needs real FEA and physical testing first. Forces are in newtons, tension positive.</p>
+  <p class="files">Files: frame.step · frame.dxf · cutlist.csv · SPEC.md · frame.py</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const D = __DATA__;
+const root = document.documentElement;
+const css = (k) => getComputedStyle(root).getPropertyValue(k).trim();
+const fmt = (n) => Math.round(n).toLocaleString("en-US");
+const CASES = { static: "Static 1 g", bump_3g: "Bump 3 g", brake_1g: "Braking 1 g" };
+
+// ---------- scene
+const stage = document.getElementById("stage");
+const canvas = document.getElementById("cv");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(32, 1, 20, 12000);
+camera.up.set(0, 0, 1);
+const controls = new THREE.OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.1;
+scene.add(new THREE.HemisphereLight(0xffffff, 0x556070, 0.9));
+const sun = new THREE.DirectionalLight(0xffffff, 0.8);
+sun.position.set(600, -900, 1200);
+scene.add(sun);
+
+const V = (a) => new THREE.Vector3(a[0], a[1], a[2]);
+const N = {};
+for (const k in D.nodes) N[k] = V(D.nodes[k]);
+
+const groups = { frame: new THREE.Group(), engine: new THREE.Group(), wheels: new THREE.Group(), rider: new THREE.Group(), nodes: new THREE.Group() };
+Object.values(groups).forEach((g) => scene.add(g));
+
+function between(a, b, r, mat, seg) {
+  const dir = new THREE.Vector3().subVectors(b, a);
+  const len = dir.length();
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, seg || 12), mat);
+  m.position.copy(a).addScaledVector(dir, 0.5);
+  m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.normalize());
+  return m;
+}
+function line(a, b, color, dashed) {
+  const g = new THREE.BufferGeometry().setFromPoints([a, b]);
+  const m = dashed ? new THREE.LineDashedMaterial({ color, dashSize: 14, gapSize: 10 }) : new THREE.LineBasicMaterial({ color });
+  const l = new THREE.Line(g, m);
+  if (dashed) l.computeLineDistances();
+  return l;
+}
+
+// members
+const meshes = [];
+D.members.forEach((m, i) => {
+  const mat = new THREE.MeshStandardMaterial({ color: 0x888888, roughness: 0.55, metalness: 0.1 });
+  const r = (m.od / 2) * (m.size === "H" ? 0.8 : 1.5);
+  const mesh = between(N[m.a], N[m.b], r, mat);
+  mesh.userData.i = i;
+  groups.frame.add(mesh);
+  meshes.push(mesh);
+});
+// node markers
+const nodeMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+for (const k in N) {
+  const s = new THREE.Mesh(new THREE.SphereGeometry(8, 12, 8), nodeMat);
+  s.position.copy(N[k]);
+  groups.nodes.add(s);
+}
+// engine envelope
+{
+  const e = D.engine;
+  const size = [e.x[1] - e.x[0], e.y[1] - e.y[0], e.z[1] - e.z[0]];
+  const ctr = [(e.x[0] + e.x[1]) / 2, (e.y[0] + e.y[1]) / 2, (e.z[0] + e.z[1]) / 2];
+  const geo = new THREE.BoxGeometry(size[0], size[1], size[2]);
+  const mat = new THREE.MeshBasicMaterial({ color: 0x139a86, transparent: true, opacity: 0.16, depthWrite: false });
+  const box = new THREE.Mesh(geo, mat);
+  box.position.set(ctr[0], ctr[1], ctr[2]);
+  const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: 0x139a86 }));
+  edges.position.copy(box.position);
+  groups.engine.add(box, edges);
+  groups.engine.userData = { mat, edges };
+}
+// wheels, swingarm, fork, shock
+const ghost = [];
+{
+  const fa = V(D.front_axle), ra = V(D.rear_axle);
+  for (const ax of [fa, ra]) {
+    const t = new THREE.Mesh(new THREE.TorusGeometry(D.wheel_r, 5, 8, 72), new THREE.MeshBasicMaterial({ color: 0x8792a1 }));
+    t.geometry.rotateX(Math.PI / 2);
+    t.position.copy(ax);
+    groups.wheels.add(t);
+    ghost.push(t.material);
+  }
+  const mk = (a, b, dashed) => { const l = line(a, b, 0x8792a1, dashed); groups.wheels.add(l); ghost.push(l.material); };
+  mk(N.DL, new THREE.Vector3(ra.x, 70, ra.z));
+  mk(N.DR, new THREE.Vector3(ra.x, -70, ra.z));
+  mk(N.HB, fa, true);
+  mk(V(D.shock_lower), N.M, true);
+  const g = new THREE.GridHelper(2600, 26, 0x000000, 0x000000);
+  g.rotateX(Math.PI / 2);
+  g.position.set(300, 0, D.ground_z);
+  scene.add(g);
+  scene.userData.grid = g;
+}
+// rider triangle
+const riderPts = { hip: V(D.hip), peg: V(D.peg), grip: V(D.grip) };
+{
+  for (const k in riderPts) {
+    const s = new THREE.Mesh(new THREE.SphereGeometry(14, 14, 10), new THREE.MeshBasicMaterial({ color: 0x139a86 }));
+    s.position.copy(riderPts[k]);
+    groups.rider.add(s);
+  }
+  groups.rider.add(line(riderPts.hip, riderPts.peg, 0x139a86, true), line(riderPts.hip, riderPts.grip, 0x139a86, true));
+}
+
+// ---------- labels
+const labelsEl = document.getElementById("labels");
+const labelItems = [];
+function addLabel(text, pos, cls, group) {
+  const d = document.createElement("div");
+  d.className = "lbl " + (cls || "");
+  d.textContent = text;
+  labelsEl.appendChild(d);
+  labelItems.push({ el: d, pos, group });
+}
+for (const k in N) {
+  if (k.endsWith("R") && k.length === 2) continue; // label the left side and centreline only
+  addLabel(k.length === 2 && k.endsWith("L") ? k[0] : k, N[k], "", "nodes");
+}
+addLabel("hip", riderPts.hip, "rider", "rider");
+addLabel("peg", riderPts.peg, "rider", "rider");
+addLabel("grip", riderPts.grip, "rider", "rider");
+
+// ---------- colouring
+const maxF = {};
+for (const c in CASES) maxF[c] = Math.max(...D.members.map((m) => Math.abs(m.forces[c])));
+let mode = "static";
+let selected = -1;
+let hover = -1;
+const cNeutral = new THREE.Color(), cT = new THREE.Color(), cC = new THREE.Color(), cInk = new THREE.Color();
+function readTheme() {
+  cNeutral.set(css("--neutral")); cT.set(css("--tension")); cC.set(css("--compress")); cInk.set(css("--ink"));
+  const bg = css("--scene-bg");
+  scene.background = new THREE.Color(bg);
+  const g = scene.userData.grid;
+  g.material.color.set(css("--grid-a"));
+  g.material.vertexColors = false;
+  g.material.needsUpdate = true;
+  nodeMat.color.copy(cInk);
+  ghost.forEach((m) => m.color.set(css("--neutral")));
+  recolor();
+}
+function recolor() {
+  D.members.forEach((m, i) => {
+    const mat = meshes[i].material;
+    if (mode === "size") {
+      mat.color.copy(m.size === "S" ? cNeutral : cInk);
+    } else {
+      const f = m.forces[mode];
+      const t = Math.pow(Math.min(1, Math.abs(f) / maxF[mode]), 0.6);
+      mat.color.copy(cNeutral).lerp(f >= 0 ? cT : cC, t);
+    }
+    mat.emissive.set(i === selected ? 0x777777 : i === hover ? 0x333333 : 0x000000);
+  });
+  const lg = document.getElementById("legend");
+  if (mode === "size") {
+    lg.innerHTML = '<div class="bar size"></div><div class="ends"><span>19 x 1.6 mm</span><span>28 x 2 and 50 x 3 mm</span></div>';
+  } else {
+    lg.innerHTML = '<div class="bar"></div><div class="ends"><span>compression ' + fmt(maxF[mode]) + ' N</span><span>0</span><span>tension</span></div>';
+  }
+}
+
+// ---------- panel
+function summary() {
+  const s = D.summary;
+  const rows = [
+    ["Nodes / members", s.nodes + " / " + s.members],
+    ["Rigidity rank", s.rigidity_rank + " of " + s.isostatic_count + " (isostatic)"],
+    ["Tube length", fmt((s.tube_length_mm.S || 0) + (s.tube_length_mm.M || 0) + (s.tube_length_mm.H || 0)) + " mm"],
+    ["Tube mass", s.tube_mass_kg.toFixed(1) + " kg"],
+    ["Min safety factor, yield", s.min_sf_yield.toFixed(2)],
+    ["Min safety factor, buckling", s.min_sf_buckle.toFixed(2)],
+    ["Max node movement, 3 g bump", s.u_max_mm.bump_3g.toFixed(2) + " mm"],
+    ["Gap to engine box", s.min_gap_to_engine_mm.toFixed(0) + " mm"],
+    ["Size", fmt(s.extent_mm.x[1] - s.extent_mm.x[0]) + " x " + fmt(s.extent_mm.y[1] - s.extent_mm.y[0]) + " x " + fmt(s.extent_mm.z[1] - s.extent_mm.z[0]) + " mm"],
+  ];
+  document.getElementById("summary").innerHTML = rows.map((r) => "<dt>" + r[0] + "</dt><dd>" + r[1] + "</dd>").join("");
+}
+const worst = (m) => Math.max(...Object.keys(CASES).map((c) => Math.abs(m.forces[c])));
+function readout() {
+  const el = document.getElementById("readout");
+  const i = selected >= 0 ? selected : hover;
+  if (i < 0) { el.innerHTML = '<h2>Member</h2><div class="hint">Hover or tap a tube, or pick a row below.</div>'; return; }
+  const m = D.members[i];
+  const f = (c) => { const v = m.forces[c]; return '<span class="' + (v >= 0 ? "f-t" : "f-c") + '">' + (v >= 0 ? "+" : "") + fmt(v) + " N " + (v >= 0 ? "tension" : "compression") + "</span>"; };
+  el.innerHTML = '<h2>Member</h2><div class="id">' + m.a + " – " + m.b + "</div><dl>" +
+    "<dt>Tube</dt><dd>" + m.od + " x " + m.wall + " mm</dd>" +
+    "<dt>Length</dt><dd>" + m.len.toFixed(0) + " mm</dd>" +
+    "<dt>Static 1 g</dt><dd>" + f("static") + "</dd>" +
+    "<dt>Bump 3 g</dt><dd>" + f("bump_3g") + "</dd>" +
+    "<dt>Braking 1 g</dt><dd>" + f("brake_1g") + "</dd>" +
+    "<dt>SF yield</dt><dd>" + (m.sf_yield == null ? "n/a" : m.sf_yield.toFixed(1)) + "</dd>" +
+    "<dt>SF buckling</dt><dd>" + (m.sf_buckle == null ? "tension only" : m.sf_buckle.toFixed(1)) + "</dd></dl>";
+  document.querySelectorAll("tr.row").forEach((r) => r.classList.toggle("sel", +r.dataset.i === selected));
+}
+function buildTable() {
+  const order = D.members.map((m, i) => i).sort((a, b) => worst(D.members[b]) - worst(D.members[a]));
+  const tb = document.getElementById("rows");
+  tb.innerHTML = order.map((i) => {
+    const m = D.members[i];
+    return '<tr class="row" tabindex="0" data-i="' + i + '"><td>' + m.a + "–" + m.b + "</td><td>" + m.od + "x" + m.wall + "</td><td>" + m.len.toFixed(0) +
+      "</td><td>" + fmt(worst(m)) + "</td><td>" + (m.sf_yield == null ? "" : m.sf_yield.toFixed(1)) + "</td><td>" + (m.sf_buckle == null ? "" : m.sf_buckle.toFixed(1)) + "</td></tr>";
+  }).join("");
+  tb.querySelectorAll("tr").forEach((r) => {
+    const pick = () => { selected = selected === +r.dataset.i ? -1 : +r.dataset.i; recolor(); readout(); };
+    r.addEventListener("click", pick);
+    r.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
+  });
+}
+document.querySelectorAll("#cases button").forEach((b) => {
+  b.addEventListener("click", () => {
+    mode = b.dataset.case;
+    document.querySelectorAll("#cases button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    recolor();
+  });
+});
+function layer(id, fn) { const c = document.getElementById(id); const run = () => fn(c.checked); c.addEventListener("change", run); run(); }
+layer("t-engine", (v) => { groups.engine.visible = v; });
+layer("t-wheels", (v) => { groups.wheels.visible = v; scene.userData.grid.visible = v; });
+layer("t-rider", (v) => { groups.rider.visible = v; });
+let labelsOn = false;
+layer("t-labels", (v) => { labelsOn = v; });
+
+// ---------- camera
+const target = new THREE.Vector3(270, 0, 120);
+const VIEWS = {
+  iso: new THREE.Vector3(1250, -1750, 800),
+  side: new THREE.Vector3(270, -2600, 120),
+  top: new THREE.Vector3(270, 0, 2700),
+  front: new THREE.Vector3(3000, 0, 120),
+};
+function setView(k) {
+  const p = VIEWS[k];
+  camera.position.copy(p);
+  controls.target.copy(target);
+  if (k === "top") camera.up.set(1, 0, 0); else camera.up.set(0, 0, 1);
+  controls.update();
+}
+document.querySelectorAll(".views button").forEach((b) => b.addEventListener("click", () => setView(b.dataset.view)));
+
+// ---------- picking
+const ray = new THREE.Raycaster();
+const ptr = new THREE.Vector2();
+function pick(ev) {
+  const r = canvas.getBoundingClientRect();
+  ptr.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ptr, camera);
+  const hit = ray.intersectObjects(meshes, false)[0];
+  return hit ? hit.object.userData.i : -1;
+}
+let moved = false, down = null;
+canvas.addEventListener("pointerdown", (e) => { down = [e.clientX, e.clientY]; moved = false; });
+canvas.addEventListener("pointermove", (e) => {
+  if (down && Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5) moved = true;
+  if (e.pointerType === "mouse" && !down) {
+    const h = pick(e);
+    if (h !== hover) { hover = h; canvas.style.cursor = h >= 0 ? "pointer" : "grab"; recolor(); readout(); }
+  }
+});
+canvas.addEventListener("pointerup", (e) => {
+  if (!moved) { const h = pick(e); selected = h >= 0 && h !== selected ? h : -1; recolor(); readout(); }
+  down = null;
+});
+
+// ---------- loop
+function resize() {
+  const w = stage.clientWidth, h = stage.clientHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(stage);
+const tmp = new THREE.Vector3();
+function frame() {
+  controls.update();
+  renderer.render(scene, camera);
+  const w = stage.clientWidth, h = stage.clientHeight;
+  for (const it of labelItems) {
+    const on = it.group === "nodes" ? labelsOn : groups[it.group].visible;
+    if (!on) { it.el.hidden = true; continue; }
+    tmp.copy(it.pos).project(camera);
+    const vis = tmp.z < 1;
+    it.el.hidden = !vis;
+    if (vis) { it.el.style.left = ((tmp.x + 1) / 2) * w + "px"; it.el.style.top = ((1 - tmp.y) / 2) * h + "px"; }
+  }
+  requestAnimationFrame(frame);
+}
+// theme changes
+const mq = window.matchMedia("(prefers-color-scheme: dark)");
+mq.addEventListener && mq.addEventListener("change", readTheme);
+new MutationObserver(readTheme).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+
+summary(); buildTable(); resize(); readTheme(); setView("iso"); readout();
+frame();
+</script>
