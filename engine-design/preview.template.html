@@ -1,0 +1,313 @@
+<title>Engine Assembly Viewer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one working viewport (3D canvas) beside an instrument panel; stacks on phones. */
+:root {
+  --bg: #e9ecf0; --panel: #f7f8fa; --ink: #17202b; --muted: #566170; --line: #cbd2da;
+  --accent: #17202b; --good: #1a7f4b; --bad: #c4361f; --hl: #e8590c;
+  --scene-bg: #dfe4ea; --grid-a: #b7c0cb;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1218; --panel: #151c25; --ink: #e5eaf1; --muted: #93a0b0; --line: #29323f; --accent: #e5eaf1;
+    --good: #4cc38a; --bad: #ff7a63; --hl: #ff9a4d; --scene-bg: #10161d; --grid-a: #2b3541; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1218; --panel: #151c25; --ink: #e5eaf1; --muted: #93a0b0; --line: #29323f; --accent: #e5eaf1;
+  --good: #4cc38a; --bad: #ff7a63; --hl: #ff9a4d; --scene-bg: #10161d; --grid-a: #2b3541; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 14px; line-height: 1.45;
+  padding-block: 16px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1360px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 20px; }
+h1 { font-size: 20px; font-weight: 600; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+.sub { color: var(--muted); font-size: 13px; margin: 0; max-width: 74ch; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 14px; align-items: start; }
+.stage { position: relative; background: var(--scene-bg); border: 1px solid var(--line); border-radius: 6px; height: min(78vh, 780px); min-height: 380px; overflow: hidden; touch-action: none; }
+.stage canvas { display: block; width: 100%; height: 100%; }
+.views { position: absolute; left: 10px; top: 10px; display: flex; gap: 4px; flex-wrap: wrap; }
+.stepnote { position: absolute; left: 10px; right: 10px; bottom: 10px; font-size: 13px; color: var(--ink); background: color-mix(in srgb, var(--panel) 88%, transparent); border: 1px solid var(--line); border-radius: 4px; padding: 6px 10px; pointer-events: none; }
+.axes { position: absolute; right: 10px; top: 12px; font: 400 11px var(--font-mono); color: var(--muted); text-align: right; pointer-events: none; }
+button { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 5px 10px; cursor: pointer; font-size: 12px; }
+button:hover { border-color: var(--muted); }
+button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+button:focus-visible, input:focus-visible, tr:focus-visible { outline: 2px solid var(--hl); outline-offset: 2px; }
+aside { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; min-width: 0; }
+h2 { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+.row { display: flex; align-items: center; gap: 8px; }
+.row + .row { margin-top: 8px; }
+input[type=range] { flex: 1; min-width: 0; accent-color: var(--hl); }
+.val { font: 500 12px var(--font-mono); min-width: 3.2em; text-align: right; }
+.checks { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+label.chk { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
+.dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; flex: none; }
+dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font-size: 13px; }
+dt { color: var(--muted); }
+dd { margin: 0; text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.readout { min-height: 128px; }
+.readout .id { font: 600 15px var(--font-body); margin-bottom: 6px; }
+.hint { color: var(--muted); font-size: 13px; }
+.tablewrap { max-height: 360px; overflow: auto; border: 1px solid var(--line); border-radius: 4px; }
+table { border-collapse: collapse; width: 100%; font: 400 12px var(--font-mono); font-variant-numeric: tabular-nums; }
+th { position: sticky; top: 0; background: var(--panel); text-align: left; font: 600 10px var(--font-body); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 5px 8px; border-bottom: 1px solid var(--line); }
+td { padding: 3px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+td.r, th.r { text-align: right; }
+tr.row2 { cursor: pointer; }
+tr.row2:hover td { background: color-mix(in srgb, var(--muted) 14%, transparent); }
+tr.row2.sel td { background: color-mix(in srgb, var(--hl) 22%, transparent); }
+tr.grp td { background: color-mix(in srgb, var(--muted) 10%, transparent); font: 600 11px var(--font-body); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.ok { color: var(--good); font-weight: 600; } .no { color: var(--bad); font-weight: 600; }
+.note { color: var(--muted); font-size: 12px; margin: 0; max-width: 100ch; }
+@media (max-width: 880px) {
+  .grid { grid-template-columns: minmax(0, 1fr); }
+  .stage { height: 60vh; min-height: 330px; }
+  .axes { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Engine Assembly Viewer</h1>
+    <p class="sub">349 cc single-cylinder, liquid-cooled, 4-valve engine for 15,000 rpm. Drag to turn, scroll to zoom, tap a part for details. Use the sliders to pull the engine apart or build it up in order.</p>
+  </header>
+
+  <div class="grid">
+    <div class="stage" id="stage">
+      <canvas id="cv" aria-label="3D view of the engine"></canvas>
+      <div class="views" role="group" aria-label="Camera view">
+        <button type="button" data-view="iso">3D</button>
+        <button type="button" data-view="right" title="Bike's right side: alternator and cam chain">Right</button>
+        <button type="button" data-view="left" title="Bike's left side: output flange, gears and pumps">Left</button>
+        <button type="button" data-view="front">Front</button>
+        <button type="button" data-view="top">Top</button>
+        <button type="button" id="cut" aria-pressed="true">Cut open</button>
+      </div>
+      <div class="axes">x front · y left · z up<br>origin = crank axis, mm</div>
+      <div class="stepnote" id="stepnote"></div>
+    </div>
+
+    <aside>
+      <section class="card">
+        <h2>Build it up</h2>
+        <div class="row"><button type="button" id="prev" aria-label="Previous step">&lsaquo;</button>
+          <input type="range" id="step" min="1" max="12" value="12" aria-label="Assembly step"><button type="button" id="next" aria-label="Next step">&rsaquo;</button>
+          <span class="val" id="stepval">12/12</span></div>
+        <h2 style="margin-top:12px">Pull it apart</h2>
+        <div class="row"><input type="range" id="explode" min="0" max="100" value="0" aria-label="Explode"><span class="val" id="exval">0%</span></div>
+        <div class="checks" id="groups"></div>
+      </section>
+
+      <section class="card readout" id="readout" aria-live="polite">
+        <h2>Part</h2>
+        <div class="hint">Hover or tap a part, or pick a row in the parts list.</div>
+      </section>
+
+      <section class="card">
+        <h2>Engine in numbers</h2>
+        <dl id="stats"></dl>
+      </section>
+    </aside>
+  </div>
+
+  <section class="card">
+    <h2>Design checks (hand calculations and CAD checks)</h2>
+    <div class="tablewrap" tabindex="0"><table><thead><tr><th>Check</th><th class="r">Result</th><th class="r">Limit</th><th>Pass</th></tr></thead><tbody id="checkrows"></tbody></table></div>
+  </section>
+
+  <section class="card">
+    <h2>Parts list</h2>
+    <div class="tablewrap" tabindex="0"><table><thead><tr><th>Part</th><th class="r">Qty</th><th>Make / buy</th><th>Material</th><th class="r">g each</th></tr></thead><tbody id="bomrows"></tbody></table></div>
+  </section>
+
+  <p class="note">Everything here is a design and hand calculation, not a tested engine. Springs are drawn as simple tubes, ports and the combustion chamber are functional shapes, and there are no CFD, FEA or dyno results. A first build must run on a test stand behind a guard before it goes in a bike.</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const D = __DATA__;
+const root = document.documentElement;
+const css = (k) => getComputedStyle(root).getPropertyValue(k).trim();
+const GROUPS = {
+  structure: ["Cases and head", "#aeb6c2"], rotating: ["Crank, rod, piston", "#e08a3a"], drive: ["Gears, chain", "#4f86d6"],
+  valvetrain: ["Valves, cams", "#3fae7c"], ignition: ["Spark, alternator", "#b45fc0"], fluids: ["Pumps, oil", "#3aa8d8"],
+  intake: ["Intake", "#8d949e"], hardware: ["Bolts, studs", "#6f7782"],
+};
+const fmt = (n, d = 0) => Number(n).toLocaleString("en-US", { maximumFractionDigits: d, minimumFractionDigits: d });
+
+// ---------- scene
+const stage = document.getElementById("stage");
+const canvas = document.getElementById("cv");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.localClippingEnabled = true;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(30, 1, 10, 9000);
+camera.up.set(0, 0, 1);
+const controls = new THREE.OrbitControls(camera, canvas);
+controls.enableDamping = true; controls.dampingFactor = 0.1;
+scene.add(new THREE.HemisphereLight(0xffffff, 0x556070, 0.95));
+const sun = new THREE.DirectionalLight(0xffffff, 0.85); sun.position.set(500, -700, 900); scene.add(sun);
+const sun2 = new THREE.DirectionalLight(0xffffff, 0.35); sun2.position.set(-600, 500, 300); scene.add(sun2);
+const cutPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
+const grid = new THREE.GridHelper(1200, 24, 0x000000, 0x000000); grid.rotateX(Math.PI / 2); grid.position.set(0, 0, -108); scene.add(grid);
+
+// ---------- meshes
+function b64(s) { const bin = atob(s); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u.buffer; }
+const items = [];
+for (const m of D.meshes) {
+  const q = new Uint16Array(b64(m.v));
+  const pos = new Float32Array(q.length);
+  for (let i = 0; i < q.length; i += 3) { pos[i] = m.lo[0] + q[i] / 65535 * m.span[0]; pos[i + 1] = m.lo[1] + q[i + 1] / 65535 * m.span[1]; pos[i + 2] = m.lo[2] + q[i + 2] / 65535 * m.span[2]; }
+  const idx = m.it === "u2" ? new Uint16Array(b64(m.i)) : new Uint32Array(b64(m.i));
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  geo.setIndex(new THREE.BufferAttribute(idx, 1));
+  geo.computeVertexNormals();
+  const mat = new THREE.MeshStandardMaterial({ color: GROUPS[m.group][1], roughness: 0.55, metalness: 0.25, side: THREE.DoubleSide });
+  const mesh = new THREE.Mesh(geo, mat);
+  scene.add(mesh);
+  items.push({ m, mesh, mat });
+}
+const byPart = {};
+items.forEach((it) => { (byPart[it.m.part] = byPart[it.m.part] || []).push(it); });
+const maxStep = Math.max(...items.map((it) => it.m.step));
+
+// ---------- state
+const state = { step: maxStep, explode: 0, groups: {}, selected: null, hover: null, cut: true };
+Object.keys(GROUPS).forEach((g) => (state.groups[g] = true));
+
+function apply() {
+  for (const it of items) {
+    const vis = state.groups[it.m.group] && it.m.step <= state.step;
+    it.mesh.visible = vis;
+    const e = state.explode;
+    it.mesh.position.set(it.m.explode[0] * e, it.m.explode[1] * e, it.m.explode[2] * e);
+    const current = state.step < maxStep && it.m.step === state.step;
+    const sel = state.selected === it.m.part, hov = !state.selected && state.hover === it.m.part;
+    it.mat.emissive.set(sel ? css("--hl") : current ? css("--hl") : hov ? 0x444444 : 0x000000);
+    it.mat.emissiveIntensity = sel ? 0.55 : current ? 0.45 : 1;
+    it.mat.clippingPlanes = state.cut ? [cutPlane] : [];
+    it.mat.needsUpdate = true;
+  }
+  document.getElementById("stepval").textContent = state.step + "/" + maxStep;
+  document.getElementById("exval").textContent = Math.round(state.explode * 100) + "%";
+  document.getElementById("stepnote").textContent = state.step < maxStep ? "Step " + state.step + ": " + D.steps[state.step] : "All parts fitted. Move the step slider to see the build order.";
+  document.querySelectorAll("tr.row2").forEach((r) => r.classList.toggle("sel", r.dataset.part === state.selected));
+  readout();
+}
+
+// ---------- panel
+const gbox = document.getElementById("groups");
+for (const g in GROUPS) {
+  const l = document.createElement("label"); l.className = "chk";
+  l.innerHTML = '<input type="checkbox" checked data-g="' + g + '"><span class="dot" style="background:' + GROUPS[g][1] + '"></span>' + GROUPS[g][0];
+  gbox.appendChild(l);
+}
+gbox.addEventListener("change", (e) => { state.groups[e.target.dataset.g] = e.target.checked; apply(); });
+const stepEl = document.getElementById("step"), exEl = document.getElementById("explode");
+stepEl.max = maxStep; stepEl.value = maxStep;
+stepEl.addEventListener("input", () => { state.step = +stepEl.value; apply(); });
+exEl.addEventListener("input", () => { state.explode = +exEl.value / 100; fit(); apply(); });
+let baseDir = null, baseDist = 1;
+function fit() {
+  if (!baseDir) { baseDir = new THREE.Vector3().subVectors(camera.position, controls.target); baseDist = baseDir.length(); baseDir.normalize(); }
+  const e = state.explode;
+  controls.target.set(10, 0, 90 + 170 * e);
+  camera.position.copy(controls.target).addScaledVector(baseDir, baseDist * (1 + 1.2 * e));
+  controls.update();
+}
+document.getElementById("prev").addEventListener("click", () => { state.step = Math.max(1, state.step - 1); stepEl.value = state.step; apply(); });
+document.getElementById("next").addEventListener("click", () => { state.step = Math.min(maxStep, state.step + 1); stepEl.value = state.step; apply(); });
+const cutBtn = document.getElementById("cut");
+cutBtn.addEventListener("click", () => { state.cut = !state.cut; cutBtn.setAttribute("aria-pressed", String(state.cut)); if (state.cut && camera.position.y < 0) setView("iso"); apply(); });
+
+function readout() {
+  const el = document.getElementById("readout");
+  const id = state.selected || state.hover;
+  if (!id) { el.innerHTML = '<h2>Part</h2><div class="hint">Hover or tap a part, or pick a row in the parts list.</div>'; return; }
+  const list = byPart[id]; const m = list[0].m;
+  el.innerHTML = '<h2>Part</h2><div class="id">' + m.name + '</div><dl>' +
+    "<dt>Group</dt><dd>" + GROUPS[m.group][0] + "</dd>" +
+    "<dt>Material</dt><dd>" + m.material + "</dd>" +
+    "<dt>Made by</dt><dd>" + m.process + "</dd>" +
+    "<dt>Make or buy</dt><dd>" + (m.source === "make" ? "make (CNC)" : "buy") + "</dd>" +
+    "<dt>Pieces</dt><dd>" + list.length + "</dd>" +
+    "<dt>Mass each</dt><dd>" + fmt(m.mass_g, 1) + " g</dd>" +
+    "<dt>Build step</dt><dd>" + m.step + "</dd></dl>";
+}
+
+const S = D.stats;
+const stats = [
+  ["Displacement", S.cc.toFixed(1) + " cc"], ["Bore x stroke", S.bore + " x " + S.stroke + " mm"], ["Compression ratio", S.cr.toFixed(1) + " : 1"],
+  ["Redline", fmt(S.redline) + " rpm"], ["Piston speed at redline", S.vp.toFixed(1) + " m/s"],
+  ["Valves", "2 x " + S.vin + " in, 2 x " + S.vex + " ex (Ti)"], ["Valve float starts (model)", fmt(S.float_in) + " / " + fmt(S.float_ex) + " rpm"],
+  ["Power estimate", S.hp_peak.toFixed(0) + " hp at " + fmt(S.hp_rpm) + " rpm"], ["Power at redline", S.hp_red.toFixed(0) + " hp"],
+  ["Torque estimate", S.nm.toFixed(0) + " N·m at " + fmt(S.nm_rpm) + " rpm"],
+  ["Dry mass", S.mass.toFixed(1) + " kg"], ["Parts", S.unique + " unique, " + S.make + " to machine"],
+  ["Size", S.size],
+];
+document.getElementById("stats").innerHTML = stats.map((r) => "<dt>" + r[0] + "</dt><dd>" + r[1] + "</dd>").join("");
+document.getElementById("checkrows").innerHTML = D.checks.map((c) =>
+  "<tr><td>" + c.name + "</td><td class='r'>" + c.value + "</td><td class='r'>" + c.limit + "</td><td class='" + (c.ok ? "ok" : "no") + "'>" + (c.ok ? "pass" : "FAIL") + "</td></tr>").join("");
+const bomEl = document.getElementById("bomrows");
+let lastG = "";
+bomEl.innerHTML = D.bom.map((b) => {
+  let h = "";
+  if (b.group !== lastG) { lastG = b.group; h += '<tr class="grp"><td colspan="5">' + GROUPS[b.group][0] + "</td></tr>"; }
+  return h + '<tr class="row2" tabindex="0" data-part="' + b.id + '"><td>' + b.name + "</td><td class='r'>" + b.qty + "</td><td>" + b.source + "</td><td>" + b.material + "</td><td class='r'>" + fmt(b.mass_each_g, 1) + "</td></tr>";
+}).join("");
+bomEl.querySelectorAll("tr.row2").forEach((r) => {
+  const pick = () => { state.selected = state.selected === r.dataset.part ? null : r.dataset.part; apply(); };
+  r.addEventListener("click", pick);
+  r.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
+});
+
+// ---------- camera
+const target = new THREE.Vector3(10, 0, 90);
+const VIEWS = { iso: [330, 880, 430], right: [0, -1100, 90], left: [0, 1100, 90], front: [1100, 0, 90], top: [0, 0, 1250] };
+function setView(k) {
+  const p = VIEWS[k]; camera.position.set(p[0] + target.x, p[1] + target.y, p[2]);
+  controls.target.copy(target);
+  if (k === "top") camera.up.set(1, 0, 0); else camera.up.set(0, 0, 1);
+  controls.update(); baseDir = null; fit();
+}
+document.querySelectorAll(".views button[data-view]").forEach((b) => b.addEventListener("click", () => setView(b.dataset.view)));
+
+// ---------- picking
+const ray = new THREE.Raycaster(); const ptr = new THREE.Vector2();
+function pick(ev) {
+  const r = canvas.getBoundingClientRect();
+  ptr.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ptr, camera);
+  const hits = ray.intersectObjects(items.filter((it) => it.mesh.visible).map((it) => it.mesh), false);
+  if (!hits.length) return null;
+  const mesh = hits[0].object; const it = items.find((x) => x.mesh === mesh); return it ? it.m.part : null;
+}
+let moved = false, down = null;
+canvas.addEventListener("pointerdown", (e) => { down = [e.clientX, e.clientY]; moved = false; });
+canvas.addEventListener("pointermove", (e) => {
+  if (down && Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5) moved = true;
+  if (e.pointerType === "mouse" && !down) { const h = pick(e); if (h !== state.hover) { state.hover = h; canvas.style.cursor = h ? "pointer" : "grab"; apply(); } }
+});
+canvas.addEventListener("pointerup", (e) => { if (!moved) { const h = pick(e); state.selected = h && h !== state.selected ? h : null; apply(); } down = null; });
+
+// ---------- loop and theme
+function resize() { const w = stage.clientWidth, h = stage.clientHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+new ResizeObserver(resize).observe(stage);
+function theme() { scene.background = new THREE.Color(css("--scene-bg")); grid.material.color.set(css("--grid-a")); apply(); }
+const mq = window.matchMedia("(prefers-color-scheme: dark)");
+mq.addEventListener && mq.addEventListener("change", theme);
+new MutationObserver(theme).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+function frame() { controls.update(); renderer.render(scene, camera); requestAnimationFrame(frame); }
+resize(); theme(); setView("iso"); frame();
+</script>

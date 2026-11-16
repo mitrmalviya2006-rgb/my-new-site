@@ -1,0 +1,45 @@
+{
+ "engine_solids": 139,
+ "boxes_enclose_engine": true,
+ "max_protrusion_outside_boxes_mm": 0.0,
+ "frame_solids": 52,
+ "closest_frame_part": "SPACER_EL",
+ "min_gap_frame_to_engine_mm": 0.0,
+ "closest_list": [
+  [
+   "SPACER_EL",
+   0.0
+  ],
+  [
+   "SPACER_FL",
+   0.0
+  ],
+  [
+   "SPACER_ER",
+   0.0
+  ],
+  [
+   "SPACER_FR",
+   0.0
+  ],
+  [
+   "PLATE_LUG_FR",
+   21.0
+  ],
+  [
+   "PLATE_LUG_FL",
+   25.5
+  ],
+  [
+   "ER-FR",
+   42.9
+  ],
+  [
+   "HB-EL",
+   46.9
+  ]
+ ],
+ "overlaps_mm3": [],
+ "max_protrusion_at_mm": null,
+ "seconds": 287
+}

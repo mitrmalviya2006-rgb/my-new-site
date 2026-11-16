@@ -1,0 +1,2791 @@
+{
+ "checks": [
+  {
+   "name": "Rod journal peak pressure",
+   "value": 129.0468619854817,
+   "limit": 140.0,
+   "ok": true,
+   "unit": "MPa",
+   "note": "36 x 19 mm Cu-Pb tri-metal shell, peak limit about 140 MPa"
+  },
+  {
+   "name": "Shaking force with balance shaft",
+   "value": 10931.59438613442,
+   "limit": 25541.695931339305,
+   "ok": true,
+   "unit": "N",
+   "note": "unbalanced 72976 N, counterweights only 29153 N"
+  },
+  {
+   "name": "Rod buckling safety factor",
+   "value": 39.72558419075244,
+   "limit": 2.0,
+   "ok": true,
+   "unit": "",
+   "note": "Euler, pinned ends, peak gas load"
+  },
+  {
+   "name": "Rod fatigue safety factor (Goodman)",
+   "value": 1.5585474432546746,
+   "limit": 1.5,
+   "ok": true,
+   "unit": "",
+   "note": "42CrMo4 Q&T, shot-peened, 16,500 rpm"
+  },
+  {
+   "name": "Rod bolt preload safety factor",
+   "value": 2.0610904462630044,
+   "limit": 2.0,
+   "ok": true,
+   "unit": "",
+   "note": "7/16-20 premium bolts at 70% of yield, 16,500 rpm"
+  },
+  {
+   "name": "Head stud preload vs gas load",
+   "value": 2.625464611325195,
+   "limit": 2.0,
+   "ok": true,
+   "unit": "",
+   "note": "4 x M10 12.9"
+  },
+  {
+   "name": "Piston pin bending safety factor",
+   "value": 1.771888040327084,
+   "limit": 1.6,
+   "ok": true,
+   "unit": "",
+   "note": "22 x 12 mm case-hardened pin"
+  },
+  {
+   "name": "Valve spring intake force / inertia at 16500 rpm",
+   "value": 1.3088295411038917,
+   "limit": 1.15,
+   "ok": true,
+   "unit": "",
+   "note": "m_eff 35.2 g, spring 827 N at full lift"
+  },
+  {
+   "name": "Valve float onset, intake (lumped dynamic model)",
+   "value": 16000,
+   "limit": 15000,
+   "ok": true,
+   "unit": "rpm",
+   "note": "first rpm with loss of cam contact; indicative only"
+  },
+  {
+   "name": "Valve spring exhaust force / inertia at 16500 rpm",
+   "value": 1.2999893225790775,
+   "limit": 1.15,
+   "ok": true,
+   "unit": "",
+   "note": "m_eff 28.8 g, spring 670 N at full lift"
+  },
+  {
+   "name": "Valve float onset, exhaust (lumped dynamic model)",
+   "value": 15500,
+   "limit": 15000,
+   "ok": true,
+   "unit": "rpm",
+   "note": "first rpm with loss of cam contact; indicative only"
+  },
+  {
+   "name": "Chain speed at redline",
+   "value": 22.225,
+   "limit": 30.0,
+   "ok": true,
+   "unit": "m/s",
+   "note": "04C chain, 14 teeth on the crank"
+  },
+  {
+   "name": "Piston speed at redline",
+   "value": 26.25,
+   "limit": 27.0,
+   "ok": true,
+   "unit": "m/s",
+   "note": "racing class above about 22"
+  },
+  {
+   "name": "Swept volume from CAD (bore 92.00 mm x stroke 52.50 mm)",
+   "value": 348.99952788729,
+   "limit": 349.0,
+   "ok": true,
+   "unit": "cc",
+   "note": "liner slice and crank pin offset"
+  },
+  {
+   "name": "Compression ratio from CAD volumes",
+   "value": 13.499945300107974,
+   "limit": 13.5,
+   "ok": true,
+   "unit": "",
+   "note": "chamber 27.92 cc, crown gap 4.00 mm"
+  },
+  {
+   "name": "Crank counterweight moment vs target",
+   "value": 17760.788115376516,
+   "limit": 18137.822763033117,
+   "ok": true,
+   "unit": "g*mm",
+   "note": "flank radius 58.0 mm"
+  },
+  {
+   "name": "Balance weight moment vs target",
+   "value": 7384.973429658974,
+   "limit": 7367.072253806398,
+   "ok": true,
+   "unit": "g*mm",
+   "note": "22.5 mm thick each"
+  },
+  {
+   "name": "Overlaps between parts (assembled pose)",
+   "value": 0,
+   "limit": 0,
+   "ok": true,
+   "unit": "pairs",
+   "note": "intersection volume > 1 mm3"
+  },
+  {
+   "name": "Moving parts vs case and liner, 36 crank angles",
+   "value": 0,
+   "limit": 0,
+   "ok": true,
+   "unit": "interferences",
+   "note": "crank, rod, bolts, piston, balance shaft"
+  },
+  {
+   "name": "Minimum gap, crank to case",
+   "value": 0.39999999999998437,
+   "limit": 0.3,
+   "ok": true,
+   "unit": "mm",
+   "note": "axial gap to bulkheads is the smallest"
+  },
+  {
+   "name": "Minimum gap, rod and bolts to case",
+   "value": 1.9547824182436118,
+   "limit": 1.0,
+   "ok": true,
+   "unit": "mm",
+   "note": "sweep at 30 degree steps"
+  },
+  {
+   "name": "Piston to valve clearance through overlap",
+   "value": 4.1951366514924535,
+   "limit": 1.5,
+   "ok": true,
+   "unit": "mm",
+   "note": "worst at crank angle 0 deg"
+  },
+  {
+   "name": "Assembly moves without interference",
+   "value": 23,
+   "limit": 23,
+   "ok": true,
+   "unit": "of 23",
+   "note": "each part or sub-assembly slid in along one straight line"
+  },
+  {
+   "name": "Engine mass (dry, no radiator, exhaust, ECU)",
+   "value": 26.91469339654562,
+   "limit": 40.0,
+   "ok": true,
+   "unit": "kg",
+   "note": "target from the chassis: 60 kg including ancillaries"
+  }
+ ],
+ "vc_cc": 27.920084409031414,
+ "cr": 13.499945300107974,
+ "piston_speed_15k": 26.25,
+ "piston_speed_16k5": 28.875,
+ "masses": {
+  "m_rec": 0.5613007431471542,
+  "m_rot": 0.4103143051133989,
+  "piston_group": 0.4306499499174248,
+  "rod": 0.5161190274440499
+ },
+ "p_peak_bar": {
+  "r10500": 103.35451510615837,
+  "r14000": 77.04217056106181
+ },
+ "pressure_curve_10500": [
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.55,
+  1.6166257879056958,
+  1.6924714224054433,
+  1.7789133932580108,
+  1.8776012100899129,
+  1.9905195916449485,
+  2.1200672705957397,
+  2.2691573415353474,
+  2.4413456543863314,
+  2.640995839190545,
+  2.873492284481734,
+  3.145515933117263,
+  3.465402227055554,
+  3.843605909896488,
+  4.293303293242655,
+  4.8311677353731755,
+  5.47835524301282,
+  6.26172695878855,
+  7.215298196866365,
+  8.381807873911933,
+  9.814086462525355,
+  11.57545549704229,
+  13.737545378117236,
+  16.37247406749064,
+  19.53456086237014,
+  23.44198295702861,
+  28.988803724614797,
+  37.32963972002087,
+  49.26771398485937,
+  64.38050349045562,
+  80.43302905342537,
+  93.94513940345406,
+  101.86522316089699,
+  103.03312433241268,
+  98.32043582967357,
+  89.71871779491326,
+  79.3201418907084,
+  68.73406326567638,
+  58.94039832472771,
+  50.385821903096655,
+  43.160002144607645,
+  37.161181280373526,
+  32.21372335386656,
+  28.134167275459987,
+  24.759552914501114,
+  21.954765639016742,
+  19.61103438278723,
+  17.641662958198683,
+  15.977721007125343,
+  14.56433450072775,
+  13.357673746486666,
+  12.322581242933323,
+  11.430719941195179,
+  10.659133402288356,
+  9.989127100629101,
+  9.405398144263097,
+  8.895356482203661,
+  8.448593620504912,
+  8.056465110899081,
+  7.711761013779459,
+  6.1857292915216435,
+  4.146418343456791,
+  2.7794273348689753,
+  1.863105859062086,
+  1.2488772052157666,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1
+ ],
+ "pressure_curve_14000": [
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.05,
+  1.1553957197418119,
+  1.2050596875938546,
+  1.2615962820855386,
+  1.3260315615236695,
+  1.3995950977547944,
+  1.4837663330637367,
+  1.5803333225877565,
+  1.6914675353746116,
+  1.819819560960154,
+  1.9686421215849603,
+  2.1419488298072995,
+  2.3447197712924877,
+  2.583168322789502,
+  2.865087623657247,
+  3.2002995152038634,
+  3.6012325953580064,
+  4.083656902582017,
+  4.667595178307228,
+  5.37840300214207,
+  6.247938671752298,
+  7.315582898050228,
+  8.628536603448056,
+  10.240194277184234,
+  12.20431384462096,
+  14.561385811237654,
+  17.47404307794281,
+  21.608735318616407,
+  27.82613287226841,
+  36.72497152230342,
+  47.990295592061415,
+  59.95611451238481,
+  70.02826577890234,
+  75.93202763267408,
+  76.80260054535195,
+  73.28968433597052,
+  66.87782098126858,
+  59.12654995473398,
+  51.23551128879056,
+  43.93515093178569,
+  37.55842771774909,
+  32.17218176898522,
+  27.700561156060065,
+  24.01264392258339,
+  20.97167512810749,
+  18.456181587184176,
+  16.365446611131958,
+  14.618390442310876,
+  13.150388303890594,
+  11.910058363136418,
+  10.856496608405703,
+  9.957031659611783,
+  9.185456531777998,
+  8.52064831846728,
+  7.945494909136092,
+  7.446061094208902,
+  7.010939844096234,
+  6.630746325881092,
+  6.297721875464099,
+  6.0054227776658315,
+  5.74847462386617,
+  4.610945256068167,
+  3.090809036315426,
+  2.0718312555103267,
+  1.3887900225717584,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1,
+  1.1
+ ],
+ "loads": {
+  "rod_tension_16k5": 56111.38199282739,
+  "rod_comp_peak": 45971.1572911025,
+  "pin_peak": 88268.05359806948
+ },
+ "pin_mean_15k": 44310.82818403675,
+ "balance": {
+  "targets": {
+   "cw": 18.137822763033117,
+   "bal": 7.367072253806398
+  },
+  "crank_moment": 17.760788115376517,
+  "bal_moment": 7.384973429658974,
+  "peak_with": 10931.59438613442,
+  "peak_cw_only": 29153.28595195697,
+  "peak_none": 72976.27408954088,
+  "phase": 180.0,
+  "primary_unbalanced": 36355.044369655465,
+  "secondary": 10045.47278635217
+ },
+ "rod": {
+  "f_tension": 43076.159378623335,
+  "f_comp": 57916.172504830836,
+  "buckling_sf": 39.72558419075244,
+  "sig_t": 172.99662401053547,
+  "sig_c": 232.59507030052544,
+  "fatigue_sf": 1.5585474432546746,
+  "pcr": 2300753.7868467993
+ },
+ "rod_bolt": {
+  "load_per_bolt": 36421.49724002018,
+  "preload": 75067.99999999999,
+  "sf": 2.0610904462630044
+ },
+ "studs": {
+  "gas": 68041.29037939385,
+  "preload": 178640.0,
+  "sf": 2.625464611325195
+ },
+ "pin": {
+  "sigma": 620.806718576273,
+  "sf": 1.771888040327084
+ },
+ "valvetrain": {
+  "in": {
+   "kind": "in",
+   "m_valve": 16.805582344510093,
+   "m_eff": 35.18202370399132,
+   "k": 102.46156454001522,
+   "f_open": 827.2309517801066,
+   "spring": {
+    "mass": 27.14482581946102,
+    "share": 0.7,
+    "k": 102.46156454001523,
+    "f0": 110.0,
+    "f_open": 827.2309517801066,
+    "outer": {
+     "d": 3.3000000000000007,
+     "D": 16.5,
+     "na": 3.64861554497206,
+     "k": 71.72309517801065,
+     "mass": 19.659082791319186,
+     "tau": 997.1411503611369,
+     "solid": 18.6404312984078,
+     "surge_hz": 955.0319261913827
+    },
+    "inner": {
+     "d": 2.0000000000000004,
+     "D": 8.0,
+     "na": 10.077457707861589,
+     "k": 30.738469362004572,
+     "mass": 7.485743028141831,
+     "tau": 996.989244898922,
+     "solid": 24.154915415723185,
+     "surge_hz": 1013.1964652149304
+    }
+   },
+   "a_pos_g": 3271.984526549377,
+   "a_neg_g": -1831.2762484913987,
+   "f_inertia_check": 632.0387229970407,
+   "margin_at": {
+    "13000": 2.1968369556582825,
+    "14000": 1.7948797250722648,
+    "15000": 1.4998323569462972,
+    "16500": 1.1828048847763508
+   },
+   "surge_ratio_15k": 7.640255409531061,
+   "float_onset_rpm": 16000,
+   "seat_velocity_15k": -0.4326685942103161
+  },
+  "ex": {
+   "kind": "ex",
+   "m_valve": 12.628698524553402,
+   "m_eff": 28.754987795532593,
+   "k": 93.30684826634241,
+   "f_open": 669.8410895980545,
+   "spring": {
+    "mass": 20.39337003264668,
+    "share": 0.7,
+    "k": 93.30684826634241,
+    "f0": 110.0,
+    "f_open": 669.8410895980545,
+    "outer": {
+     "d": 3.0000000000000004,
+     "D": 15.0,
+     "na": 3.6423601179522014,
+     "k": 65.31479378643968,
+     "mass": 14.75380300556732,
+     "tau": 990.4017738687813,
+     "solid": 16.927080353856606,
+     "surge_hz": 1052.019510324423
+    },
+    "inner": {
+     "d": 1.8000000000000003,
+     "D": 7.0,
+     "na": 10.83787969790675,
+     "k": 27.992054479902727,
+     "mass": 5.639567027079359,
+     "tau": 992.0939686255228,
+     "solid": 23.108183456232155,
+     "surge_hz": 1113.9469541902224
+    }
+   },
+   "a_pos_g": 3252.9724752782386,
+   "a_neg_g": -1826.6267122605036,
+   "f_inertia_check": 515.2666087050177,
+   "margin_at": {
+    "13000": 2.314366465943652,
+    "14000": 1.857720571982445,
+    "15000": 1.5325351257216875,
+    "16500": 1.1921386538924459
+   },
+   "surge_ratio_15k": 8.416156082595384,
+   "float_onset_rpm": 15500,
+   "seat_velocity_15k": -0.39954712692310684
+  }
+ },
+ "flow": {
+  "z_15k": 0.4167542016806723,
+  "z_13k5": 0.37507878151260504,
+  "valve_area_pct": 18.525519848771268
+ },
+ "chain": {
+  "r_crank": 14.268320483605915,
+  "r_cam": 28.357208558458108,
+  "z_cam": 250.5,
+  "length": 709.6889262498291,
+  "links": 112,
+  "speed_ms": 22.225
+ },
+ "power": [
+  {
+   "rpm": 4000,
+   "imep": 10.603654806430676,
+   "bmep": 9.253654806430676,
+   "kw": 10.765070528920864,
+   "hp": 14.435959579282878,
+   "nm": 25.699712811159596,
+   "peak_bar": 68.64667000087745,
+   "p_ivc": 1.0294890203110247,
+   "z": 0.11113445378151261
+  },
+  {
+   "rpm": 5000,
+   "imep": 10.997194693519637,
+   "bmep": 9.489694693519636,
+   "kw": 13.799579032636979,
+   "hp": 18.50523548276619,
+   "nm": 26.355254587577406,
+   "peak_bar": 71.19439559684783,
+   "p_ivc": 1.0676970721769545,
+   "z": 0.13891806722689076
+  },
+  {
+   "rpm": 6000,
+   "imep": 11.693595859266555,
+   "bmep": 10.028595859266556,
+   "kw": 17.499876101282297,
+   "hp": 23.46733385181956,
+   "nm": 27.851917850148034,
+   "peak_bar": 75.70280537498041,
+   "p_ivc": 1.135309359351133,
+   "z": 0.16670168067226893
+  },
+  {
+   "rpm": 7000,
+   "imep": 12.72523473638093,
+   "bmep": 10.90273473638093,
+   "kw": 22.19612077478427,
+   "hp": 29.764997958985706,
+   "nm": 30.279620046613946,
+   "peak_bar": 82.38150011279835,
+   "p_ivc": 1.2354692491535766,
+   "z": 0.19448529411764703
+  },
+  {
+   "rpm": 8000,
+   "imep": 13.974628223814861,
+   "bmep": 11.99462822381486,
+   "kw": 27.907463915299676,
+   "hp": 37.423909110416865,
+   "nm": 33.31208123458982,
+   "peak_bar": 90.46990962808248,
+   "p_ivc": 1.3567705269527437,
+   "z": 0.22226890756302523
+  },
+  {
+   "rpm": 9000,
+   "imep": 15.147511717274135,
+   "bmep": 13.010011717274134,
+   "kw": 34.053659603525894,
+   "hp": 45.66595752832822,
+   "nm": 36.13205504179959,
+   "peak_bar": 98.06300348060459,
+   "p_ivc": 1.4706435924818182,
+   "z": 0.25005252100840336
+  },
+  {
+   "rpm": 10000,
+   "imep": 15.867643020801799,
+   "bmep": 13.572643020801799,
+   "kw": 39.47371672035458,
+   "hp": 52.934254121995494,
+   "nm": 37.69462282952179,
+   "peak_bar": 102.7250390572989,
+   "p_ivc": 1.540559794366699,
+   "z": 0.2778361344537815
+  },
+  {
+   "rpm": 11000,
+   "imep": 15.815548361139033,
+   "bmep": 13.363048361139032,
+   "kw": 42.75056105074836,
+   "hp": 57.328502369053545,
+   "nm": 37.11252606097338,
+   "peak_bar": 102.3877850655422,
+   "p_ivc": 1.5355020212574553,
+   "z": 0.3056197478991597
+  },
+  {
+   "rpm": 12000,
+   "imep": 14.837864955166417,
+   "bmep": 12.227864955166417,
+   "kw": 42.675190964226196,
+   "hp": 57.22743108302733,
+   "nm": 33.95983794673593,
+   "peak_bar": 96.05839096885462,
+   "p_ivc": 1.4405805672717342,
+   "z": 0.33340336134453785
+  },
+  {
+   "rpm": 13000,
+   "imep": 13.407429359262194,
+   "bmep": 10.639929359262194,
+   "kw": 40.22774516731342,
+   "hp": 53.9454062693673,
+   "nm": 29.54974381301093,
+   "peak_bar": 86.79793859633918,
+   "p_ivc": 1.3017022496418194,
+   "z": 0.36118697478991596
+  },
+  {
+   "rpm": 14000,
+   "imep": 11.900483769383335,
+   "bmep": 8.975483769383336,
+   "kw": 36.54512864420623,
+   "hp": 49.007017511880555,
+   "nm": 24.92716229851987,
+   "peak_bar": 77.04217056106181,
+   "p_ivc": 1.1553957197418119,
+   "z": 0.38897058823529407
+  },
+  {
+   "rpm": 15000,
+   "imep": 10.611292789824018,
+   "bmep": 7.528792789824019,
+   "kw": 32.8443141151227,
+   "hp": 44.04422522837954,
+   "nm": 20.909339775538754,
+   "peak_bar": 68.69611730325057,
+   "p_ivc": 1.030230577838528,
+   "z": 0.4167542016806723
+  },
+  {
+   "rpm": 16000,
+   "imep": 9.657339521632156,
+   "bmep": 6.417339521632156,
+   "kw": 29.861979511227613,
+   "hp": 40.044914524556226,
+   "nm": 17.822556186452907,
+   "peak_bar": 62.52034900512469,
+   "p_ivc": 0.9376130385635091,
+   "z": 0.44453781512605045
+  }
+ ],
+ "power_peak": {
+  "rpm": 11000,
+  "imep": 15.815548361139033,
+  "bmep": 13.363048361139032,
+  "kw": 42.75056105074836,
+  "hp": 57.328502369053545,
+  "nm": 37.11252606097338,
+  "peak_bar": 102.3877850655422,
+  "p_ivc": 1.5355020212574553,
+  "z": 0.3056197478991597
+ },
+ "torque_peak": {
+  "rpm": 10000,
+  "imep": 15.867643020801799,
+  "bmep": 13.572643020801799,
+  "kw": 39.47371672035458,
+  "hp": 52.934254121995494,
+  "nm": 37.69462282952179,
+  "peak_bar": 102.7250390572989,
+  "p_ivc": 1.540559794366699,
+  "z": 0.2778361344537815
+ },
+ "cooling": {
+  "q_cool_kw": 40.61303299821094,
+  "flow_needed_lpm": 76.14943687164552,
+  "impeller_lpm": 104.97599999999997,
+  "impeller_d_mm": 36.0,
+  "oil_cc_rev": 3.6,
+  "oil_lpm_redline": 54.0,
+  "relief_bar": 4.5
+ },
+ "clearances": {
+  "crank vs upper_case": 0.4,
+  "crank vs bedplate": 0.4,
+  "crank vs oil_pan": 2.0,
+  "crank vs liner": 10.22,
+  "rod vs upper_case": 9.97,
+  "rod vs bedplate": 1.95,
+  "rod vs oil_pan": 16.99,
+  "rod vs liner": 14.48
+ },
+ "piston_valve": [
+  {
+   "theta": -80,
+   "kind": "in",
+   "side": 1,
+   "lift": 0.0,
+   "clearance": 28.408952551410774
+  },
+  {
+   "theta": -80,
+   "kind": "in",
+   "side": -1,
+   "lift": 0.0,
+   "clearance": 28.408952551410774
+  },
+  {
+   "theta": -80,
+   "kind": "ex",
+   "side": 1,
+   "lift": 5.754357793455658,
+   "clearance": 34.16331034486648
+  },
+  {
+   "theta": -80,
+   "kind": "ex",
+   "side": -1,
+   "lift": 5.754357793455658,
+   "clearance": 34.16331034486648
+  },
+  {
+   "theta": -70,
+   "kind": "in",
+   "side": 1,
+   "lift": 0.0,
+   "clearance": 23.803532221363536
+  },
+  {
+   "theta": -70,
+   "kind": "in",
+   "side": -1,
+   "lift": 0.0,
+   "clearance": 23.803532221363536
+  },
+  {
+   "theta": -70,
+   "kind": "ex",
+   "side": 1,
+   "lift": 5.416122548264366,
+   "clearance": 29.21965476962793
+  },
+  {
+   "theta": -70,
+   "kind": "ex",
+   "side": -1,
+   "lift": 5.416122548264366,
+   "clearance": 29.21965476962793
+  },
+  {
+   "theta": -60,
+   "kind": "in",
+   "side": 1,
+   "lift": 0.0,
+   "clearance": 19.29633729224198
+  },
+  {
+   "theta": -60,
+   "kind": "in",
+   "side": -1,
+   "lift": 0.0,
+   "clearance": 19.29633729224198
+  },
+  {
+   "theta": -60,
+   "kind": "ex",
+   "side": 1,
+   "lift": 4.8980886629419125,
+   "clearance": 24.194425955183885
+  },
+  {
+   "theta": -60,
+   "kind": "ex",
+   "side": -1,
+   "lift": 4.8980886629419125,
+   "clearance": 24.194425955183885
+  },
+  {
+   "theta": -50,
+   "kind": "in",
+   "side": 1,
+   "lift": 0.0,
+   "clearance": 15.070055977649485
+  },
+  {
+   "theta": -50,
+   "kind": "in",
+   "side": -1,
+   "lift": 0.0,
+   "clearance": 15.070055977649485
+  },
+  {
+   "theta": -50,
+   "kind": "ex",
+   "side": 1,
+   "lift": 4.207587260461367,
+   "clearance": 19.277643238110862
+  },
+  {
+   "theta": -50,
+   "kind": "ex",
+   "side": -1,
+   "lift": 4.207587260461367,
+   "clearance": 19.277643238110862
+  },
+  {
+   "theta": -40,
+   "kind": "in",
+   "side": 1,
+   "lift": 0.030769230769230715,
+   "clearance": 11.338375403194027
+  },
+  {
+   "theta": -40,
+   "kind": "in",
+   "side": -1,
+   "lift": 0.030769230769230715,
+   "clearance": 11.338375403194027
+  },
+  {
+   "theta": -40,
+   "kind": "ex",
+   "side": 1,
+   "lift": 3.377840182420688,
+   "clearance": 14.685446354845507
+  },
+  {
+   "theta": -40,
+   "kind": "ex",
+   "side": -1,
+   "lift": 3.377840182420688,
+   "clearance": 14.685446354845507
+  },
+  {
+   "theta": -30,
+   "kind": "in",
+   "side": 1,
+   "lift": 0.06923076923076923,
+   "clearance": 8.248680495865877
+  },
+  {
+   "theta": -30,
+   "kind": "in",
+   "side": -1,
+   "lift": 0.06923076923076923,
+   "clearance": 8.248680495865877
+  },
+  {
+   "theta": -30,
+   "kind": "ex",
+   "side": 1,
+   "lift": 2.4629563174897093,
+   "clearance": 10.642406044124812
+  },
+  {
+   "theta": -30,
+   "kind": "ex",
+   "side": -1,
+   "lift": 2.4629563174897093,
+   "clearance": 10.642406044124812
+  },
+  {
+   "theta": -20,
+   "kind": "in",
+   "side": 1,
+   "lift": 0.10798856572074637,
+   "clearance": 5.9397053454047155
+  },
+  {
+   "theta": -20,
+   "kind": "in",
+   "side": -1,
+   "lift": 0.10798856572074637,
+   "clearance": 5.9397053454047155
+  },
+  {
+   "theta": -20,
+   "kind": "ex",
+   "side": 1,
+   "lift": 1.5407176271183416,
+   "clearance": 7.372434406802317
+  },
+  {
+   "theta": -20,
+   "kind": "ex",
+   "side": -1,
+   "lift": 1.5407176271183416,
+   "clearance": 7.372434406802317
+  },
+  {
+   "theta": -10,
+   "kind": "in",
+   "side": 1,
+   "lift": 0.2073552738663005,
+   "clearance": 4.5835888447085456
+  },
+  {
+   "theta": -10,
+   "kind": "in",
+   "side": -1,
+   "lift": 0.2073552738663005,
+   "clearance": 4.5835888447085456
+  },
+  {
+   "theta": -10,
+   "kind": "ex",
+   "side": 1,
+   "lift": 0.7780414677927825,
+   "clearance": 5.154275038635021
+  },
+  {
+   "theta": -10,
+   "kind": "ex",
+   "side": -1,
+   "lift": 0.7780414677927825,
+   "clearance": 5.154275038635021
+  },
+  {
+   "theta": 0,
+   "kind": "in",
+   "side": 1,
+   "lift": 0.5338484598736231,
+   "clearance": 4.41696200710879
+  },
+  {
+   "theta": 0,
+   "kind": "in",
+   "side": -1,
+   "lift": 0.5338484598736231,
+   "clearance": 4.41696200710879
+  },
+  {
+   "theta": 0,
+   "kind": "ex",
+   "side": 1,
+   "lift": 0.3120231042572894,
+   "clearance": 4.1951366514924535
+  },
+  {
+   "theta": 0,
+   "kind": "ex",
+   "side": -1,
+   "lift": 0.3120231042572894,
+   "clearance": 4.1951366514924535
+  },
+  {
+   "theta": 10,
+   "kind": "in",
+   "side": 1,
+   "lift": 1.174294140010359,
+   "clearance": 5.550527710852611
+  },
+  {
+   "theta": 10,
+   "kind": "in",
+   "side": -1,
+   "lift": 1.174294140010359,
+   "clearance": 5.550527710852611
+  },
+  {
+   "theta": 10,
+   "kind": "ex",
+   "side": 1,
+   "lift": 0.13149001182813327,
+   "clearance": 4.507723582670376
+  },
+  {
+   "theta": 10,
+   "kind": "ex",
+   "side": -1,
+   "lift": 0.13149001182813327,
+   "clearance": 4.507723582670376
+  },
+  {
+   "theta": 20,
+   "kind": "in",
+   "side": 1,
+   "lift": 2.0798789499211345,
+   "clearance": 7.911595729605098
+  },
+  {
+   "theta": 20,
+   "kind": "in",
+   "side": -1,
+   "lift": 2.0798789499211345,
+   "clearance": 7.911595729605098
+  },
+  {
+   "theta": 20,
+   "kind": "ex",
+   "side": 1,
+   "lift": 0.08461538461538465,
+   "clearance": 5.916332164299362
+  },
+  {
+   "theta": 20,
+   "kind": "ex",
+   "side": -1,
+   "lift": 0.08461538461538465,
+   "clearance": 5.916332164299362
+  },
+  {
+   "theta": 30,
+   "kind": "in",
+   "side": 1,
+   "lift": 3.0905181920948013,
+   "clearance": 11.26996791872989
+  },
+  {
+   "theta": 30,
+   "kind": "in",
+   "side": -1,
+   "lift": 3.0905181920948013,
+   "clearance": 11.26996791872989
+  },
+  {
+   "theta": 30,
+   "kind": "ex",
+   "side": 1,
+   "lift": 0.04615384615384615,
+   "clearance": 8.225603572788941
+  },
+  {
+   "theta": 30,
+   "kind": "ex",
+   "side": -1,
+   "lift": 0.04615384615384615,
+   "clearance": 8.225603572788941
+  },
+  {
+   "theta": 40,
+   "kind": "in",
+   "side": 1,
+   "lift": 4.070988883385994,
+   "clearance": 15.378595055810816
+  },
+  {
+   "theta": 40,
+   "kind": "in",
+   "side": -1,
+   "lift": 4.070988883385994,
+   "clearance": 15.378595055810816
+  },
+  {
+   "theta": 40,
+   "kind": "ex",
+   "side": 1,
+   "lift": 0.007692307692307784,
+   "clearance": 11.31529848011715
+  },
+  {
+   "theta": 40,
+   "kind": "ex",
+   "side": -1,
+   "lift": 0.007692307692307784,
+   "clearance": 11.31529848011715
+  },
+  {
+   "theta": 50,
+   "kind": "in",
+   "side": 1,
+   "lift": 4.957514482864934,
+   "clearance": 20.027570460514422
+  },
+  {
+   "theta": 50,
+   "kind": "in",
+   "side": -1,
+   "lift": 4.957514482864934,
+   "clearance": 20.027570460514422
+  },
+  {
+   "theta": 50,
+   "kind": "ex",
+   "side": 1,
+   "lift": 0.0,
+   "clearance": 15.070055977649485
+  },
+  {
+   "theta": 50,
+   "kind": "ex",
+   "side": -1,
+   "lift": 0.0,
+   "clearance": 15.070055977649485
+  },
+  {
+   "theta": 60,
+   "kind": "in",
+   "side": 1,
+   "lift": 5.701402774406196,
+   "clearance": 24.997740066648177
+  },
+  {
+   "theta": 60,
+   "kind": "in",
+   "side": -1,
+   "lift": 5.701402774406196,
+   "clearance": 24.997740066648177
+  },
+  {
+   "theta": 60,
+   "kind": "ex",
+   "side": 1,
+   "lift": 0.0,
+   "clearance": 19.29633729224198
+  },
+  {
+   "theta": 60,
+   "kind": "ex",
+   "side": -1,
+   "lift": 0.0,
+   "clearance": 19.29633729224198
+  },
+  {
+   "theta": 70,
+   "kind": "in",
+   "side": 1,
+   "lift": 6.272334335222699,
+   "clearance": 30.075866556586234
+  },
+  {
+   "theta": 70,
+   "kind": "in",
+   "side": -1,
+   "lift": 6.272334335222699,
+   "clearance": 30.075866556586234
+  },
+  {
+   "theta": 70,
+   "kind": "ex",
+   "side": 1,
+   "lift": 0.0,
+   "clearance": 23.80353222136356
+  },
+  {
+   "theta": 70,
+   "kind": "ex",
+   "side": -1,
+   "lift": 0.0,
+   "clearance": 23.80353222136356
+  },
+  {
+   "theta": 80,
+   "kind": "in",
+   "side": 1,
+   "lift": 6.662232141598766,
+   "clearance": 35.07118469300953
+  },
+  {
+   "theta": 80,
+   "kind": "in",
+   "side": -1,
+   "lift": 6.662232141598766,
+   "clearance": 35.07118469300953
+  },
+  {
+   "theta": 80,
+   "kind": "ex",
+   "side": 1,
+   "lift": 0.0,
+   "clearance": 28.408952551410756
+  },
+  {
+   "theta": 80,
+   "kind": "ex",
+   "side": -1,
+   "lift": 0.0,
+   "clearance": 28.408952551410756
+  }
+ ],
+ "insertion": [
+  {
+   "step": "Crank and rod up into the upper case",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    0,
+    -1
+   ],
+   "start_mm": 150
+  },
+  {
+   "step": "Balance shaft up into the upper case",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    0,
+    -1
+   ],
+   "start_mm": 120
+  },
+  {
+   "step": "Bedplate with lower shells up",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    0,
+    -1
+   ],
+   "start_mm": 100
+  },
+  {
+   "step": "Piston and rings down onto the rod",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    0,
+    1
+   ],
+   "start_mm": 120
+  },
+  {
+   "step": "Piston pin in from the side",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    1,
+    0
+   ],
+   "start_mm": 90
+  },
+  {
+   "step": "Barrel and liner down over the piston",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    0,
+    1
+   ],
+   "start_mm": 170
+  },
+  {
+   "step": "Gasket and built-up head down onto the studs",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    0,
+    1
+   ],
+   "start_mm": 150
+  },
+  {
+   "step": "Followers down onto the valve tips",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    0,
+    1
+   ],
+   "start_mm": 60
+  },
+  {
+   "step": "Follower shafts in from the side",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    1,
+    0
+   ],
+   "start_mm": 70
+  },
+  {
+   "step": "Cams down into the saddles",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    0,
+    1
+   ],
+   "start_mm": 70
+  },
+  {
+   "step": "Cam ladder down",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    0,
+    1
+   ],
+   "start_mm": 60
+  },
+  {
+   "step": "Cam cover down",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    0,
+    1
+   ],
+   "start_mm": 70
+  },
+  {
+   "step": "Spark plug and coil down the well",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    0,
+    1
+   ],
+   "start_mm": 130
+  },
+  {
+   "step": "Balance gear onto the shaft from the output side",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    1,
+    0
+   ],
+   "start_mm": 60
+  },
+  {
+   "step": "Water impeller onto the shaft from the output side",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    1,
+    0
+   ],
+   "start_mm": 50
+  },
+  {
+   "step": "Gear cover over the crank end",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    1,
+    0
+   ],
+   "start_mm": 150
+  },
+  {
+   "step": "Pump cover",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    1,
+    0
+   ],
+   "start_mm": 80
+  },
+  {
+   "step": "Output flange from the output side",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    1,
+    0
+   ],
+   "start_mm": 70
+  },
+  {
+   "step": "Crank sprocket onto the alternator end",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    -1,
+    0
+   ],
+   "start_mm": 60
+  },
+  {
+   "step": "Cam sprockets onto the cam ends",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    -1,
+    0
+   ],
+   "start_mm": 60
+  },
+  {
+   "step": "Trigger wheel and rotor",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    -1,
+    0
+   ],
+   "start_mm": 80
+  },
+  {
+   "step": "Chain and alternator cover with stator",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    -1,
+    0
+   ],
+   "start_mm": 220
+  },
+  {
+   "step": "Oil pan up",
+   "worst_mm3": 0.0,
+   "ok": true,
+   "direction": [
+    0,
+    0,
+    -1
+   ],
+   "start_mm": 100
+  }
+ ],
+ "mass": {
+  "dry_kg": 26.91469339654562,
+  "oil_l": 1.0,
+  "coolant_l": 0.9,
+  "wet_kg": 28.72969339654562,
+  "cg": [
+   -15.841487733636788,
+   -6.062840638055835,
+   61.958757521468364
+  ]
+ },
+ "bom": [
+  {
+   "id": "balance_gear",
+   "name": "Balance gear (46T, m2)",
+   "group": "drive",
+   "material": "Case-hardened steel",
+   "process": "CNC + grind",
+   "source": "make",
+   "step": 10,
+   "qty": 1,
+   "mass_each_g": 581.3,
+   "mass_total_g": 581.3
+  },
+  {
+   "id": "cam_sprocket",
+   "name": "Cam sprocket (28T)",
+   "group": "drive",
+   "material": "Steel, hardened",
+   "process": "CNC",
+   "source": "make",
+   "step": 11,
+   "qty": 2,
+   "mass_each_g": 99.2,
+   "mass_total_g": 198.3
+  },
+  {
+   "id": "chain",
+   "name": "Cam roller chain 04C, 112 links",
+   "group": "drive",
+   "material": "Roller chain",
+   "process": "Buy",
+   "source": "buy",
+   "step": 11,
+   "qty": 1,
+   "mass_each_g": 263.1,
+   "mass_total_g": 263.1
+  },
+  {
+   "id": "chain_guide",
+   "name": "Chain guide",
+   "group": "drive",
+   "material": "Steel + polymer pad",
+   "process": "CNC",
+   "source": "make",
+   "step": 11,
+   "qty": 1,
+   "mass_each_g": 55.1,
+   "mass_total_g": 55.1
+  },
+  {
+   "id": "chain_tensioner",
+   "name": "Chain tensioner",
+   "group": "drive",
+   "material": "Steel + spring",
+   "process": "Buy / CNC",
+   "source": "buy",
+   "step": 11,
+   "qty": 1,
+   "mass_each_g": 55.1,
+   "mass_total_g": 55.1
+  },
+  {
+   "id": "crank_sprocket",
+   "name": "Crank sprocket (14T)",
+   "group": "drive",
+   "material": "Steel, hardened",
+   "process": "CNC",
+   "source": "make",
+   "step": 11,
+   "qty": 1,
+   "mass_each_g": 14.1,
+   "mass_total_g": 14.1
+  },
+  {
+   "id": "water_impeller",
+   "name": "Water pump impeller",
+   "group": "fluids",
+   "material": "Al 6061",
+   "process": "CNC",
+   "source": "make",
+   "step": 10,
+   "qty": 1,
+   "mass_each_g": 5.9,
+   "mass_total_g": 5.9
+  },
+  {
+   "id": "oil_rotor_inner",
+   "name": "Oil pump inner rotor",
+   "group": "fluids",
+   "material": "Sintered steel",
+   "process": "Buy",
+   "source": "buy",
+   "step": 11,
+   "qty": 1,
+   "mass_each_g": 29.4,
+   "mass_total_g": 29.4
+  },
+  {
+   "id": "oil_rotor_outer",
+   "name": "Oil pump outer rotor",
+   "group": "fluids",
+   "material": "Sintered steel",
+   "process": "Buy",
+   "source": "buy",
+   "step": 11,
+   "qty": 1,
+   "mass_each_g": 70.8,
+   "mass_total_g": 70.8
+  },
+  {
+   "id": "oil_filter",
+   "name": "Oil filter (spin-on)",
+   "group": "fluids",
+   "material": "-",
+   "process": "Buy",
+   "source": "buy",
+   "step": 12,
+   "qty": 1,
+   "mass_each_g": 300.0,
+   "mass_total_g": 300.0
+  },
+  {
+   "id": "bolt_m10_main",
+   "name": "Main cap bolt M10",
+   "group": "hardware",
+   "material": "12.9 steel",
+   "process": "Buy",
+   "source": "buy",
+   "step": 4,
+   "qty": 4,
+   "mass_each_g": 50.8,
+   "mass_total_g": 203.1
+  },
+  {
+   "id": "bolt_m8_case",
+   "name": "Case bolt M8",
+   "group": "hardware",
+   "material": "12.9 steel",
+   "process": "Buy",
+   "source": "buy",
+   "step": 4,
+   "qty": 12,
+   "mass_each_g": 30.1,
+   "mass_total_g": 361.5
+  },
+  {
+   "id": "nut_m10",
+   "name": "Nut M10",
+   "group": "hardware",
+   "material": "12.9 steel",
+   "process": "Buy",
+   "source": "buy",
+   "step": 7,
+   "qty": 4,
+   "mass_each_g": 10.7,
+   "mass_total_g": 43.0
+  },
+  {
+   "id": "stud",
+   "name": "Head stud M10 x 228",
+   "group": "hardware",
+   "material": "12.9 steel",
+   "process": "Buy",
+   "source": "buy",
+   "step": 7,
+   "qty": 4,
+   "mass_each_g": 122.4,
+   "mass_total_g": 489.5
+  },
+  {
+   "id": "washer_m10",
+   "name": "Washer M10",
+   "group": "hardware",
+   "material": "Hardened steel",
+   "process": "Buy",
+   "source": "buy",
+   "step": 7,
+   "qty": 4,
+   "mass_each_g": 3.6,
+   "mass_total_g": 14.4
+  },
+  {
+   "id": "bolt_m6_ladder",
+   "name": "Ladder bolt M6",
+   "group": "hardware",
+   "material": "10.9 steel",
+   "process": "Buy",
+   "source": "buy",
+   "step": 8,
+   "qty": 8,
+   "mass_each_g": 9.1,
+   "mass_total_g": 72.6
+  },
+  {
+   "id": "flange_bolt",
+   "name": "Output flange bolt M8",
+   "group": "hardware",
+   "material": "12.9 steel",
+   "process": "Buy",
+   "source": "buy",
+   "step": 10,
+   "qty": 6,
+   "mass_each_g": 15.2,
+   "mass_total_g": 91.2
+  },
+  {
+   "id": "bolt_m6_pan",
+   "name": "Oil pan bolt M6",
+   "group": "hardware",
+   "material": "10.9 steel",
+   "process": "Buy",
+   "source": "buy",
+   "step": 12,
+   "qty": 12,
+   "mass_each_g": 18.1,
+   "mass_total_g": 217.5
+  },
+  {
+   "id": "spark_coil",
+   "name": "Coil-on-plug",
+   "group": "ignition",
+   "material": "-",
+   "process": "Buy",
+   "source": "buy",
+   "step": 9,
+   "qty": 1,
+   "mass_each_g": 147.7,
+   "mass_total_g": 147.7
+  },
+  {
+   "id": "spark_plug",
+   "name": "Spark plug M10",
+   "group": "ignition",
+   "material": "Iridium",
+   "process": "Buy",
+   "source": "buy",
+   "step": 9,
+   "qty": 1,
+   "mass_each_g": 45.9,
+   "mass_total_g": 45.9
+  },
+  {
+   "id": "alt_rotor",
+   "name": "Alternator rotor",
+   "group": "ignition",
+   "material": "Steel + magnets",
+   "process": "Buy",
+   "source": "buy",
+   "step": 11,
+   "qty": 1,
+   "mass_each_g": 741.1,
+   "mass_total_g": 741.1
+  },
+  {
+   "id": "alt_stator",
+   "name": "Alternator stator",
+   "group": "ignition",
+   "material": "Laminations + copper",
+   "process": "Buy",
+   "source": "buy",
+   "step": 11,
+   "qty": 1,
+   "mass_each_g": 610.3,
+   "mass_total_g": 610.3
+  },
+  {
+   "id": "trigger_wheel",
+   "name": "Trigger wheel (36-2)",
+   "group": "ignition",
+   "material": "Steel",
+   "process": "CNC",
+   "source": "make",
+   "step": 11,
+   "qty": 1,
+   "mass_each_g": 127.9,
+   "mass_total_g": 127.9
+  },
+  {
+   "id": "throttle_body",
+   "name": "Throttle body 44 mm",
+   "group": "intake",
+   "material": "Al",
+   "process": "Buy",
+   "source": "buy",
+   "step": 12,
+   "qty": 1,
+   "mass_each_g": 176.7,
+   "mass_total_g": 176.7
+  },
+  {
+   "id": "bal_shell_upper",
+   "name": "Balance shaft shell, upper",
+   "group": "rotating",
+   "material": "Tri-metal",
+   "process": "Buy",
+   "source": "buy",
+   "step": 1,
+   "qty": 2,
+   "mass_each_g": 4.7,
+   "mass_total_g": 9.5
+  },
+  {
+   "id": "main_shell_upper",
+   "name": "Main shell, upper",
+   "group": "rotating",
+   "material": "Tri-metal",
+   "process": "Buy",
+   "source": "buy",
+   "step": 1,
+   "qty": 2,
+   "mass_each_g": 16.3,
+   "mass_total_g": 32.6
+  },
+  {
+   "id": "conrod",
+   "name": "Connecting rod",
+   "group": "rotating",
+   "material": "42CrMo4, shot-peened",
+   "process": "CNC 5-axis, hone",
+   "source": "make",
+   "step": 2,
+   "qty": 1,
+   "mass_each_g": 297.6,
+   "mass_total_g": 297.6
+  },
+  {
+   "id": "rod_bolt",
+   "name": "Rod bolt 7/16-20",
+   "group": "rotating",
+   "material": "Premium alloy steel",
+   "process": "Buy (ARP-type)",
+   "source": "buy",
+   "step": 2,
+   "qty": 2,
+   "mass_each_g": 46.0,
+   "mass_total_g": 92.0
+  },
+  {
+   "id": "rod_cap",
+   "name": "Rod cap",
+   "group": "rotating",
+   "material": "42CrMo4, shot-peened",
+   "process": "CNC 5-axis, hone",
+   "source": "make",
+   "step": 2,
+   "qty": 1,
+   "mass_each_g": 126.5,
+   "mass_total_g": 126.5
+  },
+  {
+   "id": "rod_shell_lower",
+   "name": "Rod shell, lower",
+   "group": "rotating",
+   "material": "Tri-metal",
+   "process": "Buy",
+   "source": "buy",
+   "step": 2,
+   "qty": 1,
+   "mass_each_g": 12.4,
+   "mass_total_g": 12.4
+  },
+  {
+   "id": "rod_shell_upper",
+   "name": "Rod shell, upper",
+   "group": "rotating",
+   "material": "Tri-metal",
+   "process": "Buy",
+   "source": "buy",
+   "step": 2,
+   "qty": 1,
+   "mass_each_g": 12.4,
+   "mass_total_g": 12.4
+  },
+  {
+   "id": "small_end_bush",
+   "name": "Small-end bush",
+   "group": "rotating",
+   "material": "Bronze",
+   "process": "Buy",
+   "source": "buy",
+   "step": 2,
+   "qty": 1,
+   "mass_each_g": 13.9,
+   "mass_total_g": 13.9
+  },
+  {
+   "id": "balance_shaft",
+   "name": "Balance shaft",
+   "group": "rotating",
+   "material": "42CrMo4, nitrided",
+   "process": "CNC turn-mill, grind",
+   "source": "make",
+   "step": 3,
+   "qty": 1,
+   "mass_each_g": 971.4,
+   "mass_total_g": 971.4
+  },
+  {
+   "id": "crankshaft",
+   "name": "Crankshaft (one piece)",
+   "group": "rotating",
+   "material": "42CrMo4, nitrided",
+   "process": "CNC 5-axis, heat treat, grind",
+   "source": "make",
+   "step": 3,
+   "qty": 1,
+   "mass_each_g": 3853.7,
+   "mass_total_g": 3853.7
+  },
+  {
+   "id": "bal_shell_lower",
+   "name": "Balance shaft shell, lower",
+   "group": "rotating",
+   "material": "Tri-metal",
+   "process": "Buy",
+   "source": "buy",
+   "step": 4,
+   "qty": 2,
+   "mass_each_g": 4.7,
+   "mass_total_g": 9.5
+  },
+  {
+   "id": "main_shell_lower",
+   "name": "Main shell, lower",
+   "group": "rotating",
+   "material": "Tri-metal",
+   "process": "Buy",
+   "source": "buy",
+   "step": 4,
+   "qty": 2,
+   "mass_each_g": 16.3,
+   "mass_total_g": 32.6
+  },
+  {
+   "id": "piston",
+   "name": "Piston (forged)",
+   "group": "rotating",
+   "material": "Al 2618 forged",
+   "process": "Buy (custom forging)",
+   "source": "buy",
+   "step": 5,
+   "qty": 1,
+   "mass_each_g": 255.6,
+   "mass_total_g": 255.6
+  },
+  {
+   "id": "piston_pin",
+   "name": "Piston pin",
+   "group": "rotating",
+   "material": "Case-hardened steel, DLC",
+   "process": "Buy",
+   "source": "buy",
+   "step": 5,
+   "qty": 1,
+   "mass_each_g": 127.4,
+   "mass_total_g": 127.4
+  },
+  {
+   "id": "ring_oil",
+   "name": "Oil ring",
+   "group": "rotating",
+   "material": "Steel rails + expander",
+   "process": "Buy",
+   "source": "buy",
+   "step": 5,
+   "qty": 1,
+   "mass_each_g": 16.5,
+   "mass_total_g": 16.5
+  },
+  {
+   "id": "ring_second",
+   "name": "Second ring",
+   "group": "rotating",
+   "material": "Cast iron",
+   "process": "Buy",
+   "source": "buy",
+   "step": 5,
+   "qty": 1,
+   "mass_each_g": 7.1,
+   "mass_total_g": 7.1
+  },
+  {
+   "id": "ring_top",
+   "name": "Top ring",
+   "group": "rotating",
+   "material": "Steel, nitrided",
+   "process": "Buy",
+   "source": "buy",
+   "step": 5,
+   "qty": 1,
+   "mass_each_g": 6.3,
+   "mass_total_g": 6.3
+  },
+  {
+   "id": "output_flange",
+   "name": "Output flange (bolt-on)",
+   "group": "rotating",
+   "material": "42CrMo4",
+   "process": "CNC turn-mill",
+   "source": "make",
+   "step": 10,
+   "qty": 1,
+   "mass_each_g": 267.4,
+   "mass_total_g": 267.4
+  },
+  {
+   "id": "upper_case",
+   "name": "Upper crankcase",
+   "group": "structure",
+   "material": "Al 7075-T6",
+   "process": "CNC 5-axis + line bore",
+   "source": "make",
+   "step": 1,
+   "qty": 1,
+   "mass_each_g": 3081.7,
+   "mass_total_g": 3081.7
+  },
+  {
+   "id": "bedplate",
+   "name": "Bedplate (main caps)",
+   "group": "structure",
+   "material": "Al 7075-T6",
+   "process": "CNC + line bore with upper case",
+   "source": "make",
+   "step": 4,
+   "qty": 1,
+   "mass_each_g": 1814.6,
+   "mass_total_g": 1814.6
+  },
+  {
+   "id": "barrel",
+   "name": "Cylinder barrel",
+   "group": "structure",
+   "material": "Al 7075-T6",
+   "process": "CNC turn-mill",
+   "source": "make",
+   "step": 6,
+   "qty": 1,
+   "mass_each_g": 867.2,
+   "mass_total_g": 867.2
+  },
+  {
+   "id": "head_gasket",
+   "name": "Head gasket (MLS)",
+   "group": "structure",
+   "material": "Stainless MLS, 3 layers",
+   "process": "Laser cut, buy",
+   "source": "buy",
+   "step": 6,
+   "qty": 1,
+   "mass_each_g": 9.1,
+   "mass_total_g": 9.1
+  },
+  {
+   "id": "liner",
+   "name": "Cylinder liner (wet)",
+   "group": "structure",
+   "material": "42CrMo4, nitrided",
+   "process": "CNC turning, nitride, hone",
+   "source": "make",
+   "step": 6,
+   "qty": 1,
+   "mass_each_g": 610.9,
+   "mass_total_g": 610.9
+  },
+  {
+   "id": "head",
+   "name": "Cylinder head",
+   "group": "structure",
+   "material": "Al 7075-T6",
+   "process": "CNC 5-axis",
+   "source": "make",
+   "step": 7,
+   "qty": 1,
+   "mass_each_g": 3745.8,
+   "mass_total_g": 3745.8
+  },
+  {
+   "id": "cam_ladder",
+   "name": "Cam ladder (bearing caps)",
+   "group": "structure",
+   "material": "Al 7075-T6",
+   "process": "CNC 3-axis",
+   "source": "make",
+   "step": 8,
+   "qty": 1,
+   "mass_each_g": 347.1,
+   "mass_total_g": 347.1
+  },
+  {
+   "id": "cam_cover",
+   "name": "Cam cover",
+   "group": "structure",
+   "material": "Al 6061-T6",
+   "process": "CNC 3-axis",
+   "source": "make",
+   "step": 9,
+   "qty": 1,
+   "mass_each_g": 471.9,
+   "mass_total_g": 471.9
+  },
+  {
+   "id": "cover_gear",
+   "name": "Gear and pump cover (bike's left side)",
+   "group": "structure",
+   "material": "Al 6061-T6",
+   "process": "CNC 3-axis",
+   "source": "make",
+   "step": 10,
+   "qty": 1,
+   "mass_each_g": 575.1,
+   "mass_total_g": 575.1
+  },
+  {
+   "id": "pump_cover",
+   "name": "Water pump cover",
+   "group": "structure",
+   "material": "Al 6061-T6",
+   "process": "CNC 3-axis",
+   "source": "make",
+   "step": 10,
+   "qty": 1,
+   "mass_each_g": 86.3,
+   "mass_total_g": 86.3
+  },
+  {
+   "id": "cover_chain",
+   "name": "Chain and alternator cover (bike's right side)",
+   "group": "structure",
+   "material": "Al 6061-T6",
+   "process": "CNC 3-axis",
+   "source": "make",
+   "step": 11,
+   "qty": 1,
+   "mass_each_g": 1803.0,
+   "mass_total_g": 1803.0
+  },
+  {
+   "id": "oil_pan",
+   "name": "Oil pan",
+   "group": "structure",
+   "material": "Al 6061-T6",
+   "process": "CNC 3-axis",
+   "source": "make",
+   "step": 12,
+   "qty": 1,
+   "mass_each_g": 1348.8,
+   "mass_total_g": 1348.8
+  },
+  {
+   "id": "keepers",
+   "name": "Keepers",
+   "group": "valvetrain",
+   "material": "Steel",
+   "process": "Buy",
+   "source": "buy",
+   "step": 7,
+   "qty": 4,
+   "mass_each_g": 0.6,
+   "mass_total_g": 2.5
+  },
+  {
+   "id": "retainer",
+   "name": "Spring retainer",
+   "group": "valvetrain",
+   "material": "Ti-6Al-4V",
+   "process": "Buy",
+   "source": "buy",
+   "step": 7,
+   "qty": 4,
+   "mass_each_g": 2.2,
+   "mass_total_g": 8.6
+  },
+  {
+   "id": "spring_inner",
+   "name": "Valve spring, inner",
+   "group": "valvetrain",
+   "material": "Cr-Si wire, peened",
+   "process": "Buy (custom)",
+   "source": "buy",
+   "step": 7,
+   "qty": 4,
+   "mass_each_g": 7.5,
+   "mass_total_g": 26.3
+  },
+  {
+   "id": "spring_outer",
+   "name": "Valve spring, outer",
+   "group": "valvetrain",
+   "material": "Cr-Si wire, peened",
+   "process": "Buy (custom)",
+   "source": "buy",
+   "step": 7,
+   "qty": 4,
+   "mass_each_g": 19.7,
+   "mass_total_g": 68.8
+  },
+  {
+   "id": "valve_exhaust",
+   "name": "Exhaust valve",
+   "group": "valvetrain",
+   "material": "Ti-6Al-4V, coated",
+   "process": "Buy (custom)",
+   "source": "buy",
+   "step": 7,
+   "qty": 2,
+   "mass_each_g": 12.6,
+   "mass_total_g": 25.3
+  },
+  {
+   "id": "valve_intake",
+   "name": "Intake valve",
+   "group": "valvetrain",
+   "material": "Ti-6Al-4V",
+   "process": "Buy (custom)",
+   "source": "buy",
+   "step": 7,
+   "qty": 2,
+   "mass_each_g": 16.8,
+   "mass_total_g": 33.6
+  },
+  {
+   "id": "exhaust_cam",
+   "name": "Exhaust camshaft",
+   "group": "valvetrain",
+   "material": "Steel, DLC",
+   "process": "CNC, harden, grind",
+   "source": "make",
+   "step": 8,
+   "qty": 1,
+   "mass_each_g": 391.3,
+   "mass_total_g": 391.3
+  },
+  {
+   "id": "follower",
+   "name": "Finger follower",
+   "group": "valvetrain",
+   "material": "Steel, DLC",
+   "process": "CNC, grind",
+   "source": "make",
+   "step": 8,
+   "qty": 4,
+   "mass_each_g": 18.5,
+   "mass_total_g": 74.1
+  },
+  {
+   "id": "follower_shaft",
+   "name": "Follower pivot shaft",
+   "group": "valvetrain",
+   "material": "Steel, ground",
+   "process": "Buy / CNC",
+   "source": "buy",
+   "step": 8,
+   "qty": 2,
+   "mass_each_g": 31.6,
+   "mass_total_g": 63.1
+  },
+  {
+   "id": "intake_cam",
+   "name": "Intake camshaft",
+   "group": "valvetrain",
+   "material": "Steel, DLC",
+   "process": "CNC, harden, grind",
+   "source": "make",
+   "step": 8,
+   "qty": 1,
+   "mass_each_g": 394.8,
+   "mass_total_g": 394.8
+  },
+  {
+   "id": "lash_cap",
+   "name": "Lash cap (shim)",
+   "group": "valvetrain",
+   "material": "Steel, hardened",
+   "process": "Buy",
+   "source": "buy",
+   "step": 8,
+   "qty": 4,
+   "mass_each_g": 1.2,
+   "mass_total_g": 5.0
+  }
+ ],
+ "counts": {
+  "unique": 65,
+  "make": 25,
+  "buy": 40,
+  "pieces": 138
+ },
+ "ctx": {
+  "piston_gap": 4.00198974609375,
+  "chamber_cc": 27.920084409031414,
+  "cr": 13.499945300107974,
+  "flank": 58.0,
+  "bal_t": 22.46,
+  "m_rec": 0.5613007431471542,
+  "m_rot": 0.4103143051133989,
+  "crank_moment": 17760.788115376516,
+  "bal_moment": 7384.973429658974,
+  "cw_target": 18137.822763033117,
+  "bal_target": 7367.072253806398,
+  "piston_group": 0.4306499499174248,
+  "rod": {
+   "total": 0.5161190274440499,
+   "m_small": 0.13065079322972933,
+   "m_big": 0.3854682342143206,
+   "zcg": 50.29837779046965
+  },
+  "swept_cc": 348.99952788729,
+  "bore_cad": 91.99999999999999,
+  "stroke_cad": 52.49999999999999,
+  "chain_links": 112,
+  "chain_path": 709.6889262498291
+ },
+ "interface": {
+  "boxes": {
+   "case": {
+    "x": [
+     -139.49,
+     104.0
+    ],
+    "y": [
+     -62.0,
+     62.5
+    ],
+    "z": [
+     -106.5,
+     62.0
+    ]
+   },
+   "filter": {
+    "x": [
+     104.0,
+     159.0
+    ],
+    "y": [
+     -31.0,
+     31.0
+    ],
+    "z": [
+     -106.0,
+     -44.0
+    ]
+   },
+   "rear_boss": {
+    "x": [
+     -138.0,
+     -112.0
+    ],
+    "y": [
+     -82.0,
+     82.0
+    ],
+    "z": [
+     62.0,
+     92.0
+    ]
+   },
+   "cover_chain_plate": {
+    "x": [
+     -138.5,
+     90.5
+    ],
+    "y": [
+     -80.5,
+     -62.0
+    ],
+    "z": [
+     -106.0,
+     63.5
+    ]
+   },
+   "cover_chain_strip": {
+    "x": [
+     -48.5,
+     48.5
+    ],
+    "y": [
+     -80.5,
+     -62.0
+    ],
+    "z": [
+     63.0,
+     150.0
+    ]
+   },
+   "cover_chain_head": {
+    "x": [
+     -70.5,
+     70.5
+    ],
+    "y": [
+     -80.5,
+     -62.0
+    ],
+    "z": [
+     149.5,
+     287.0
+    ]
+   },
+   "alt_bulge": {
+    "x": [
+     -78.0,
+     78.0
+    ],
+    "y": [
+     -126.0,
+     -80.0
+    ],
+    "z": [
+     -78.0,
+     78.5
+    ]
+   },
+   "cover_gear": {
+    "x": [
+     -150.0,
+     58.0
+    ],
+    "y": [
+     62.0,
+     88.0
+    ],
+    "z": [
+     -58.0,
+     58.0
+    ]
+   },
+   "pump_cover": {
+    "x": [
+     -126.0,
+     -58.0
+    ],
+    "y": [
+     88.0,
+     118.0
+    ],
+    "z": [
+     -34.0,
+     34.0
+    ]
+   },
+   "flange": {
+    "x": [
+     -36.0,
+     36.0
+    ],
+    "y": [
+     88.0,
+     106.0
+    ],
+    "z": [
+     -36.0,
+     36.0
+    ]
+   },
+   "head_block": {
+    "x": [
+     -78.0,
+     94.0
+    ],
+    "y": [
+     -62.5,
+     62.5
+    ],
+    "z": [
+     61.5,
+     286.5
+    ]
+   },
+   "front_ears": {
+    "x": [
+     70.0,
+     94.5
+    ],
+    "y": [
+     -82.5,
+     82.5
+    ],
+    "z": [
+     149.0,
+     177.5
+    ]
+   },
+   "intake": {
+    "x": [
+     -135.0,
+     -62.0
+    ],
+    "y": [
+     -28.0,
+     28.0
+    ],
+    "z": [
+     172.0,
+     228.0
+    ]
+   },
+   "exhaust_stub": {
+    "x": [
+     70.0,
+     100.0
+    ],
+    "y": [
+     -20.0,
+     20.0
+    ],
+    "z": [
+     165.0,
+     205.0
+    ]
+   },
+   "coil": {
+    "x": [
+     -10.0,
+     10.0
+    ],
+    "y": [
+     -10.0,
+     10.0
+    ],
+    "z": [
+     205.0,
+     290.5
+    ]
+   }
+  },
+  "envelope": {
+   "x": [
+    -150.0,
+    159.0
+   ],
+   "y": [
+    -126.0,
+    114.0
+   ],
+   "z": [
+    -106.0,
+    290.5
+   ]
+  },
+  "mounts": {
+   "upper": {
+    "x": 83.0,
+    "z": 163.0,
+    "y_inner": 62.0,
+    "y_outer": 82.0,
+    "hole_d": 14.0
+   },
+   "rear": {
+    "x": -125.0,
+    "z": 78.0,
+    "y_inner": 62.0,
+    "y_outer": 82.0,
+    "hole_d": 14.0
+   }
+  },
+  "mass_dry_kg": 26.91469339654562,
+  "mass_wet_kg": 28.72969339654562,
+  "cg": [
+   -15.841487733636788,
+   -6.062840638055835,
+   61.958757521468364
+  ],
+  "crank_axis": [
+   0,
+   0,
+   0
+  ],
+  "output_flange_y": [
+   90.0,
+   100.0
+  ],
+  "exhaust_flange": {
+   "x": 70.0,
+   "z": 185.0
+  },
+  "intake_flange": {
+   "x": -70.0,
+   "z": 200.0
+  },
+  "note": "engine frame: x forward, y left, z up, origin = crank axis; +y = output side (bike's left), -y = alternator side (bike's right)"
+ },
+ "envelope": {
+  "x": [
+   -150.0,
+   159.0
+  ],
+  "y": [
+   -126.0,
+   114.0
+  ],
+  "z": [
+   -106.0,
+   290.5
+  ]
+ },
+ "steps": {
+  "1": "Upper case on a stand. Press the upper main shells and balance-shaft shells into their saddles.",
+  "2": "On the bench: fit the rod shells and bush, bolt the rod cap onto the crank pin with the two 7/16 rod bolts.",
+  "3": "Lower the crank and rod from below into the upper case, then the balance shaft (weights down).",
+  "4": "Fit the lower shells, set the bedplate on the upper case (add two dowel pins here in the real build, not modelled yet), fit and torque the M10 main-cap bolts and M8 case bolts.",
+  "5": "Set the piston on the rod small end from above, push the pin in from the side, fit the rings.",
+  "6": "Press the liner into the barrel, lower the barrel over the piston (ring compressor), then the head gasket.",
+  "7": "Head with valves, springs, retainers and keepers built on the bench; lower it onto the four studs, washers and nuts.",
+  "8": "Set the four followers on the valve tips, slide in the pivot shafts, lower the cams, fit the ladder and its bolts.",
+  "9": "Cam cover, spark plug and coil.",
+  "10": "Output side (+y, the bike's left): balance gear onto the shaft, water impeller, gear cover and pump cover, then the output flange.",
+  "11": "Alternator side (-y, the bike's right): oil pump rotors, crank sprocket, cam sprockets, chain with master link, guide, tensioner, trigger wheel, rotor, chain and alternator cover with stator.",
+  "12": "Oil pan, oil filter and throttle body."
+ },
+ "log": [
+  "building parts and solving piston, crank and balance weights",
+  "piston crown gap 4.00 mm -> chamber 27.92 cc, CR 13.50",
+  "masses: piston 256 g, pin 127 g, rings 30 g, rod total 516 g (small-end share 131 g), bush 14 g",
+  "reciprocating 561 g, rotating (big end + shells) 410 g",
+  "WARNING: counterweights at max radius give 17761 g*mm, target 18138",
+  "balance weight thickness 22.46 mm (each), moment 7385 g*mm, target 7367",
+  "138 solids built; chain path 710 mm = 112 links",
+  "overlap check of the assembled engine",
+  "overlap check: 475 bbox-overlapping pairs tested in 8s, 0 with intersection > 1.0 mm3",
+  "motion sweep every 10 degrees",
+  "motion sweep (36 crank angles) took 16s",
+  "minimum clearances",
+  "piston to valve clearance",
+  "piston-valve: worst clearance 4.20 mm at theta 0 deg (ex valve, lift 0.31 mm)",
+  "assembly insertion sweeps",
+  "insertion sweeps: 23 moves, 0 blocked",
+  "engine dry mass 26.9 kg, wet 28.7 kg, CG (-15.8, -6.1, 62.0)",
+  "BOM: 65 unique parts (25 to machine, 40 to buy), 138 pieces modelled",
+  "exporting STEP",
+  "25 part STEP files written",
+  "tessellating for the viewer",
+  "interface boxes enclose every mesh vertex; boxes that had to grow (mm): {'case': 1.49, 'cover_chain_plate': 0.5, 'cover_chain_strip': 0.5, 'cover_chain_head': 0.5, 'alt_bulge': 0.5, 'head_block': 0.5, 'front_ears': 0.5}",
+  "mesh.json 1.8 MB, 108738 triangles"
+ ]
+}

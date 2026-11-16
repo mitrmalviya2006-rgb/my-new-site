@@ -6,42 +6,132 @@
   "isostatic_count": 39,
   "redundant_members": 0,
   "tube_length_mm": {
-   "S": 12975.0,
+   "S": 12295.0,
    "M": 320.0,
    "H": 140.0
   },
-  "tube_mass_kg": 9.81,
-  "min_stiffness_eig": 28.92976553378282,
+  "tube_mass_kg": 9.34,
+  "min_stiffness_eig": 62.415342728635046,
   "support_reaction_max_N": {
    "static": 0.0,
    "bump_3g": 0.0,
    "brake_1g": 0.0
   },
-  "min_sf_yield": 3.76,
-  "min_sf_buckle": 6.47,
+  "min_sf_yield": 3.16,
+  "min_sf_buckle": 6.01,
   "failing_members": [],
-  "min_gap_to_engine_mm": 26.8,
+  "min_gap_to_engine_mm": 21.7,
+  "closest_to_engine": [
+   [
+    "ER-FR",
+    21.7
+   ],
+   [
+    "FR-PR",
+    38.2
+   ],
+   [
+    "SR-FR",
+    44.2
+   ],
+   [
+    "FR-DR",
+    44.2
+   ],
+   [
+    "M-FR",
+    44.2
+   ]
+  ],
+  "min_tube_to_tube_gap_mm": 35.1,
+  "closest_tube_pairs": [
+   [
+    35.1,
+    "SL-FL",
+    "CL-PL"
+   ],
+   [
+    35.1,
+    "SR-FR",
+    "CR-PR"
+   ],
+   [
+    40.7,
+    "EL-FL",
+    "SL-PL"
+   ]
+  ],
+  "min_gap_to_airbox_zone_mm": 11.4,
+  "airbox_zone_mm": {
+   "x": [
+    100.0,
+    440.0
+   ],
+   "y": [
+    -100.0,
+    100.0
+   ],
+   "z": [
+    275.0,
+    400.0
+   ]
+  },
+  "removed_base_members": [],
+  "added_members": [],
+  "engine": {
+   "origin_mm": [
+    300.0,
+    0.0,
+    -20.0
+   ],
+   "envelope_mm": {
+    "x": [
+     150.0,
+     459.0
+    ],
+    "y": [
+     -126.0,
+     118.0
+    ],
+    "z": [
+     -126.5,
+     270.5
+    ]
+   },
+   "mount_y_mm": 152.0,
+   "wet_kg": 28.72969339654562,
+   "extras_kg": 9.0,
+   "drivetrain_allowance_kg": 20.0,
+   "kg_on_each_E": 9.9,
+   "kg_on_each_F": 18.96,
+   "cg_vehicle_mm": [
+    284.2,
+    -6.1,
+    42.0
+   ],
+   "front_share": 0.525
+  },
   "cases": {
    "static": {
-    "R_front_N": 1039.735314144818,
-    "R_rear_N": 1018.4695106821479,
+    "R_front_N": 1006.5721657786625,
+    "R_rear_N": 1024.7812351999496,
     "Fx_front_N": -0.0,
-    "shock_axial_N": 2320.6408820132024,
-    "total_mass_kg": 209.806811908967
+    "shock_axial_N": 2335.0225063999806,
+    "total_mass_kg": 207.0696637083193
    },
    "bump_3g": {
-    "R_front_N": 3119.2059424344543,
-    "R_rear_N": 3055.408532046444,
+    "R_front_N": 3019.7164973359872,
+    "R_rear_N": 3074.3437055998484,
     "Fx_front_N": -0.0,
-    "shock_axial_N": 6961.922646039609,
-    "total_mass_kg": 209.806811908967
+    "shock_axial_N": 7005.067519199939,
+    "total_mass_kg": 207.0696637083193
    },
    "brake_1g": {
-    "R_front_N": 1933.628872893799,
-    "R_rear_N": 124.57595193316683,
-    "Fx_front_N": -2058.204824826966,
-    "shock_axial_N": 283.8534133222983,
-    "total_mass_kg": 209.806811908967
+    "R_front_N": 1869.6390610067697,
+    "R_rear_N": 161.7143399718419,
+    "Fx_front_N": -2031.353400978612,
+    "shock_axial_N": 368.4753491492184,
+    "total_mass_kg": 207.0696637083193
    }
   },
   "extent_mm": {
@@ -54,14 +144,14 @@
     235.0
    ],
    "z": [
-    -150.0,
+    0.0,
     430.0
    ]
   },
   "u_max_mm": {
-   "static": 0.18623434270429737,
-   "bump_3g": 0.5587030281128912,
-   "brake_1g": 0.2291383930874088
+   "static": 0.9214717207796089,
+   "bump_3g": 2.764415162338824,
+   "brake_1g": 0.8185800945675783
   }
  }
 }

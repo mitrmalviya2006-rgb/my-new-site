@@ -3,11 +3,13 @@
 Minimal truss motorcycle chassis generator (prototype).
 
 x = forward, y = left, z = up, origin = swingarm pivot centre, units mm.
-The engine is NOT designed: it is a placeholder box (ENGINE) with mount nodes E/F/P
-that you move when the real engine exists.
+The engine is the real 349 cc single from ../engine-design. This script reads its
+interface.json (clearance boxes, mount points, mass, centre of gravity), places the
+crank axis at ENGINE_ORIGIN and hangs it from nodes E (front-upper) and F (rear-upper).
+Change ENGINE_ORIGIN or MOUNT_Y below and rerun; rigidity, forces and clearance are re-checked.
 
-Run:  python frame.py          (needs numpy, cadquery, ezdxf)
-Out:  frame.step frame.dxf cutlist.csv results.json preview_data.json SPEC.md
+Run:  python frame.py          (needs numpy, cadquery, ezdxf; run engine-design/build.py first)
+Out:  frame.step frame.dxf cutlist.csv results.json preview_data.json
 """
 import csv
 import itertools
@@ -31,8 +33,40 @@ TUBES = {              # key: (OD, wall) mm
     "H": (50.0, 3.0),  # steering head tube
 }
 RHO = 7.85e-6          # kg/mm3
-ENGINE = {"x": (100.0, 550.0), "y": (-125.0, 125.0), "z": (-170.0, 250.0)}  # placeholder envelope
-CLEAR = 10.0           # mm gap between tube surface and engine envelope
+CLEAR = 10.0           # mm gap between tube surface and engine clearance boxes
+
+# ---- real engine (from ../engine-design/interface.json)
+ENGINE_DIR = os.path.join(os.path.dirname(OUT), "engine-design")
+ENGINE_ORIGIN = np.array([300.0, 0.0, -20.0])   # crank axis in the vehicle frame (same height as the wheel axles)
+MOUNT_Y = 152.0        # |y| of engine-mount nodes E and F: outside the alternator bulge (|y| 126) with tube clearance
+ENGINE_EXTRA_KG = 9.0  # exhaust, radiator + hoses, ECU, wiring: hangs on the engine, not designed here
+DRIVETRAIN_KG = 20.0   # allowance for the future clutch + gearbox/CVT behind the engine (not designed)
+SPACER_OD, SPACER_ID = 24.0, 13.0   # mount spacer between engine ear and frame plate (M12 bolt)
+EAR_OUTER_Y = 82.0     # |y| of the outer face of the engine mount ears
+
+
+def load_engine():
+    path = os.path.join(ENGINE_DIR, "interface.json")
+    if not os.path.exists(path):
+        raise SystemExit("missing %s: run engine-design/build.py first" % path)
+    with open(path) as fh:
+        d = json.load(fh)
+    boxes = {}
+    for name, b in d["boxes"].items():
+        boxes[name] = {ax: (b[ax][0] + ENGINE_ORIGIN[i], b[ax][1] + ENGINE_ORIGIN[i]) for i, ax in enumerate("xyz")}
+    env = {ax: (min(b[ax][0] for b in boxes.values()), max(b[ax][1] for b in boxes.values())) for ax in "xyz"}
+    return d, boxes, env
+
+
+ENGINE_IF, ENGINE_BOXES, ENGINE = load_engine()      # ENGINE = overall envelope of all boxes
+_MP = ENGINE_IF["mounts"]
+E_XZ = (ENGINE_ORIGIN[0] + _MP["upper"]["x"], ENGINE_ORIGIN[2] + _MP["upper"]["z"])   # front-upper mount
+F_XZ = (ENGINE_ORIGIN[0] + _MP["rear"]["x"], ENGINE_ORIGIN[2] + _MP["rear"]["z"])     # rear-upper mount
+ENGINE_CG = ENGINE_ORIGIN + np.array(ENGINE_IF["cg"])
+ENGINE_KG = ENGINE_IF["mass_wet_kg"] + ENGINE_EXTRA_KG
+_fE = (ENGINE_CG[0] - F_XZ[0]) / (E_XZ[0] - F_XZ[0])      # share of the engine weight carried by the front mounts
+M_E = ENGINE_KG * _fE / 2                                  # kg on each E node
+M_F = ENGINE_KG * (1 - _fE) / 2 + DRIVETRAIN_KG / 2        # kg on each F node (drivetrain allowance sits behind the engine)
 
 WHEEL_R = 300.0
 FRONT_AXLE = np.array([840.0, 0.0, -20.0])
@@ -58,35 +92,71 @@ def build_nodes():
         N["C" + sfx] = (-120.0, s * 130.0, 430.0)   # seat rear
         N["S" + sfx] = (150.0, s * 130.0, 430.0)    # seat front / tank
         N["D" + sfx] = (0.0, s * 160.0, 0.0)        # swingarm pivot
-        N["E" + sfx] = (400.0, s * 165.0, 290.0)    # engine upper mount (hung from E-E tube over the engine)
-        N["F" + sfx] = (60.0, s * 165.0, -150.0)    # engine lower-rear mount (F-F tube sits behind the engine)
+        N["E" + sfx] = (E_XZ[0], s * MOUNT_Y, E_XZ[1])    # engine front-upper mount (hole axis along y)
+        N["F" + sfx] = (F_XZ[0], s * MOUNT_Y, F_XZ[1])    # engine rear-upper mount (hole axis along y)
         N["P" + sfx] = (300.0, s * 235.0, 10.0)     # footpeg
     return {k: np.array(v) for k, v in N.items()}
 
 
+CENTRE = ("HT", "HB", "M")      # nodes on the centreline (no L/R suffix)
+
+
 def base_members():
-    m = [("HT", "HB")]
+    """The 39 bars (= 3j-6 for 15 joints, isostatic) found for the real engine position.
+
+    With the engine hung from E and F, no tube may cross the head (E-E, F-F and the S-E cross diagonals of the
+    placeholder layout all cut through it, and E-D would pass 8 mm from node F). An annealing search over every
+    allowed bar (clear of the engine boxes and of the airbox zone, no crossings, mirror-symmetric) with the real
+    load cases converged on this set from four different random starts (see SPEC.md section 3).
+    """
+    m = [("HT", "HB"), ("DL", "DR"), ("CL", "CR")]
+    per_side = [("HT", "S"), ("S", "C"),                 # top rail: head tube - tank/seat front - seat rear
+                ("S", "E"), ("S", "F"),                  # two hangers carry the engine from the top rail
+                ("HT", "E"), ("HB", "E"),                # fork-side down tubes to the front engine mount
+                ("E", "F"),                              # ties the two engine mounts together
+                ("F", "D"), ("C", "D"),                  # to the swingarm pivot
+                ("M", "C"), ("M", "D"), ("M", "S"), ("M", "F"),   # shock top node braced four ways
+                ("E", "P"), ("F", "P"), ("D", "P"), ("S", "P"), ("C", "P")]   # footpeg node braced five ways
     for sfx in "LR":
-        for a, b in [("HT", "S"), ("S", "C"), ("S", "E"), ("HT", "E"), ("HB", "E"),
-                     ("E", "F"), ("E", "C"), ("E", "D"), ("F", "D"), ("C", "D"),
-                     ("D", "P"), ("F", "P"), ("E", "P")]:
-            m.append((a if a in ("HT", "HB") else a + sfx, b + sfx))
-        m.append(("M", "C" + sfx))
-        m.append(("M", "D" + sfx))
-    m += [("DL", "DR"), ("CL", "CR"), ("SL", "SR"), ("EL", "ER"), ("FL", "FR"), ("SL", "ER"), ("SR", "EL")]
+        for a, b in per_side:
+            m.append(tuple(n if n in CENTRE else n + sfx for n in (a, b)))
     return m
 
 
 # --------------------------------------------------------------- geometry utils
-def seg_box_dist(p, q, box, n=200):
+def seg_box_dist(p, q, box, n=400):
+    """Smallest distance from segment p-q to an axis-aligned box (0 if it enters the box)."""
     lo = np.array([box["x"][0], box["y"][0], box["z"][0]])
     hi = np.array([box["x"][1], box["y"][1], box["z"][1]])
-    best = 1e9
-    for t in np.linspace(0, 1, n):
-        pt = p + (q - p) * t
-        d = np.maximum(np.maximum(lo - pt, pt - hi), 0.0)
-        best = min(best, float(np.linalg.norm(d)))
-    return best
+    t = np.linspace(0.0, 1.0, n)[:, None]
+    pts = p[None, :] + (q - p)[None, :] * t
+    d = np.maximum(np.maximum(lo[None, :] - pts, pts - hi[None, :]), 0.0)
+    return float(np.linalg.norm(d, axis=1).min())
+
+
+def seg_engine_dist(p, q):
+    """Smallest distance from segment p-q to any of the engine clearance boxes."""
+    return min(seg_box_dist(p, q, b) for b in ENGINE_BOXES.values())
+
+
+# volume above the engine kept free of tubes for the airbox, injector, ECU and wiring (not designed here)
+KEEP_OUT = {"airbox": {"x": (100.0, 440.0), "y": (-100.0, 100.0), "z": (275.0, 400.0)}}
+
+
+def seg_seg_dist(p1, q1, p2, q2):
+    """Smallest distance between two segments (Ericson, Real-Time Collision Detection)."""
+    d1, d2, r = q1 - p1, q2 - p2, p1 - p2
+    a, e, f = float(d1 @ d1), float(d2 @ d2), float(d2 @ r)
+    c, b = float(d1 @ r), float(d1 @ d2)
+    clamp = lambda x: min(1.0, max(0.0, x))
+    den = a * e - b * b
+    s = clamp((b * f - c * e) / den) if den > 1e-12 else 0.0
+    t = (b * s + f) / e
+    if t < 0.0:
+        t, s = 0.0, clamp(-c / a)
+    elif t > 1.0:
+        t, s = 1.0, clamp((b - c) / a)
+    return float(np.linalg.norm((p1 + d1 * s) - (p2 + d2 * t)))
 
 
 def rigidity_rank(names, pos, edges):
@@ -113,7 +183,7 @@ def fix_topology(names, pos, edges):
         L = np.linalg.norm(pos[a] - pos[b])
         if not (150 <= L <= 800):
             continue
-        if seg_box_dist(pos[a], pos[b], ENGINE) < r_clear:
+        if seg_engine_dist(pos[a], pos[b]) < r_clear:
             continue
         cands.append((L, a, b))
     cands.sort()
@@ -153,7 +223,7 @@ def masses(pos, members, sizes):
         m[a] += mm / 2
         m[b] += mm / 2
     pts = {  # component masses in kg
-        "EL": 20, "ER": 20, "FL": 10, "FR": 10,                 # engine 60
+        "EL": M_E, "ER": M_E, "FL": M_F, "FR": M_F,             # real engine + extras + drivetrain allowance
         "CL": 17.5 + 15, "CR": 17.5 + 15,                         # rider rear + misc
         "SL": 15 + 5, "SR": 15 + 5,                               # rider front + tank
         "PL": 12.5, "PR": 12.5,                                   # legs on pegs
@@ -387,7 +457,7 @@ def export_all(names, pos, rows, cuts, results):
                         "%.1f" % c["end_b_angle"] if c["end_b_angle"] != "" else "", c["end_b_onto"]])
 
     # ---- plates (flat patterns)
-    PL = {"LUG": (70, 90, 6, 12), "PIVOT": (110, 150, 6, 20), "PEG": (50, 60, 6, 10), "SHOCK": (60, 80, 6, 12)}
+    PL = {"LUG": (70, 90, 6, 13), "PIVOT": (110, 150, 6, 20), "PEG": (50, 60, 6, 10), "SHOCK": (60, 80, 6, 12)}
     plate_at = []
     for sfx in "LR":
         s = 1 if sfx == "L" else -1
@@ -417,9 +487,22 @@ def export_all(names, pos, rows, cuts, results):
         assy.add(outer.cut(inner), name=r["id"], color=col)
     for kind, n, s in plate_at:
         assy.add(plate_solid(kind, pos[n], s), name="PLATE_%s_%s" % (kind, n), color=cq.Color(0.9, 0.55, 0.1, 1))
-    ex, ey, ez = ENGINE["x"], ENGINE["y"], ENGINE["z"]
-    assy.add(cq.Solid.makeBox(ex[1] - ex[0], ey[1] - ey[0], ez[1] - ez[0], cq.Vector(ex[0], ey[0], ez[0])),
-             name="ENGINE_ENVELOPE_PLACEHOLDER", color=cq.Color(0.2, 0.5, 0.9, 0.35))
+    # mount spacers: M12 bolt runs engine ear -> spacer -> frame lug plate -> nut (spacer length = gap between them)
+    t_lug = PL["LUG"][2]
+    for sfx in "LR":
+        s = 1 if sfx == "L" else -1
+        for n in ("E", "F"):
+            p = pos[n + sfx]
+            y_in = abs(p[1]) - (TUBES["M"][0] / 2 + t_lug / 2 + 1) - t_lug / 2       # inner face of the lug plate
+            sp = cq.Solid.makeCylinder(SPACER_OD / 2, y_in - EAR_OUTER_Y, cq.Vector(p[0], s * EAR_OUTER_Y, p[2]), cq.Vector(0, s, 0))
+            hole = cq.Solid.makeCylinder(SPACER_ID / 2, y_in - EAR_OUTER_Y + 2, cq.Vector(p[0], s * (EAR_OUTER_Y - 1), p[2]), cq.Vector(0, s, 0))
+            assy.add(sp.cut(hole), name="SPACER_%s%s" % (n, sfx), color=cq.Color(0.9, 0.55, 0.1, 1))
+    # the real engine goes here (import ../engine-design/engine.step and move it by ENGINE_ORIGIN); the clearance
+    # boxes below are what the frame was checked against
+    for bname, b in ENGINE_BOXES.items():
+        assy.add(cq.Solid.makeBox(b["x"][1] - b["x"][0], b["y"][1] - b["y"][0], b["z"][1] - b["z"][0],
+                                  cq.Vector(b["x"][0], b["y"][0], b["z"][0])),
+                 name="ENGINE_BOX_%s" % bname, color=cq.Color(0.2, 0.5, 0.9, 0.35))
     assy.save(os.path.join(OUT, "frame.step"))
 
     # ---- DXF
@@ -439,15 +522,17 @@ def export_all(names, pos, rows, cuts, results):
         for n, p in pos.items():
             q = proj(p)
             msp.add_circle((q[0] + off[0], q[1] + off[1]), 6, dxfattribs={"layer": lay})
-        # engine envelope outline
-        lo = proj((ENGINE["x"][0], ENGINE["y"][0], ENGINE["z"][0]))
-        hi = proj((ENGINE["x"][1], ENGINE["y"][1], ENGINE["z"][1]))
-        x0, x1 = sorted((lo[0], hi[0]))
-        y0, y1 = sorted((lo[1], hi[1]))
-        msp.add_lwpolyline([(x0 + off[0], y0 + off[1]), (x1 + off[0], y0 + off[1]),
-                            (x1 + off[0], y1 + off[1]), (x0 + off[0], y1 + off[1])], close=True,
-                           dxfattribs={"layer": "ENGINE"})
-        msp.add_text("%s VIEW (engine box = placeholder)" % lay, height=25,
+        # engine clearance boxes (outline of each box in this view)
+        for b in ENGINE_BOXES.values():
+            lo = proj((b["x"][0], b["y"][0], b["z"][0]))
+            hi = proj((b["x"][1], b["y"][1], b["z"][1]))
+            x0, x1 = sorted((lo[0], hi[0]))
+            y0, y1 = sorted((lo[1], hi[1]))
+            msp.add_lwpolyline([(x0 + off[0], y0 + off[1]), (x1 + off[0], y0 + off[1]),
+                                (x1 + off[0], y1 + off[1]), (x0 + off[0], y1 + off[1])], close=True,
+                               dxfattribs={"layer": "ENGINE"})
+        msp.add_text("%s VIEW (engine = clearance boxes of the 349 cc design, crank axis at x%g y%g z%g)"
+                     % (lay, ENGINE_ORIGIN[0], ENGINE_ORIGIN[1], ENGINE_ORIGIN[2]), height=25,
                      dxfattribs={"layer": "TEXT", "insert": (off[0], off[1] - 400 if lay == "SIDE" else off[1] + 320)})
     # wheels in side view for reference
     for ax in (FRONT_AXLE, REAR_AXLE):
@@ -473,7 +558,12 @@ def export_all(names, pos, rows, cuts, results):
                      "len": round(r["length"], 1), "forces": {k: round(v, 1) for k, v in r["forces"].items()},
                      "sf_yield": None if math.isinf(r["sf_yield"]) else round(r["sf_yield"], 2),
                      "sf_buckle": None if math.isinf(r["sf_buckle"]) else round(r["sf_buckle"], 2)} for r in rows],
-        "engine": ENGINE,
+        "engine": {"origin": [float(x) for x in ENGINE_ORIGIN],
+                   "envelope": {k: [float(v[0]), float(v[1])] for k, v in ENGINE.items()},
+                   "boxes": {n: {k: [float(v[0]), float(v[1])] for k, v in b.items()} for n, b in ENGINE_BOXES.items()},
+                   "mounts": {"E": [float(E_XZ[0]), float(E_XZ[1])], "F": [float(F_XZ[0]), float(F_XZ[1])],
+                              "ear_outer_y": EAR_OUTER_Y, "mount_y": MOUNT_Y},
+                   "airbox": {k: list(v) for k, v in KEEP_OUT["airbox"].items()}},
         "front_axle": FRONT_AXLE.tolist(), "rear_axle": REAR_AXLE.tolist(), "wheel_r": WHEEL_R,
         "hip": HIP, "peg": PEG, "grip": GRIP, "shock_lower": SHOCK_LOWER.tolist(),
         "ground_z": float(FRONT_CONTACT[2]),
@@ -488,7 +578,9 @@ def prune_central(names, pos, members, need):
     red = len(members) - need
     if red <= 0:
         return members, None
-    central = [("CL", "CR"), ("SL", "SR"), ("EL", "ER"), ("FL", "FR")]
+    central = [m for m in [("CL", "CR"), ("SL", "SR"), ("EL", "ER"), ("FL", "FR")] if m in members]
+    if red > len(central):
+        return members, None
     best = None
     for combo in itertools.combinations(central, red):
         rest = [m for m in members if m not in combo]
@@ -508,19 +600,21 @@ def prune_central(names, pos, members, need):
 def main():
     pos = build_nodes()
     names = list(pos.keys())
-    members = base_members()
-    # geometry sanity: engine clearance for base members
+    base = base_members()
+    # base members that would cut through (or come within tube radius + CLEAR of) the real engine are dropped;
+    # fix_topology then adds alternatives that keep clear of the engine
     r_clear = TUBES["M"][0] / 2 + CLEAR
-    bad = [(a, b, seg_box_dist(pos[a], pos[b], ENGINE)) for a, b in members
-           if seg_box_dist(pos[a], pos[b], ENGINE) < r_clear]
+    blocked = [(a, b, seg_engine_dist(pos[a], pos[b])) for a, b in base]
+    blocked = [(a, b, d) for a, b, d in blocked if d < r_clear]
+    gone = {(a, b) for a, b, _ in blocked}
+    members = [m for m in base if m not in gone]
+    print("base members removed (too close to the engine):", [(a, b, round(d, 1)) for a, b, d in blocked])
     added, rank, need = fix_topology(names, pos, members)
     members = members + added
     members, dropped = prune_central(names, pos, members, need)
     print("dropped redundant cross members:", dropped)
     print("nodes %d  members %d  rank %d  (isostatic needs 3j-6 = %d)  extra added: %s"
           % (len(names), len(members), rank, need, added))
-    if bad:
-        print("ENGINE CLEARANCE VIOLATIONS (base members):", [(a, b, round(d, 1)) for a, b, d in bad])
 
     def mass_fn(sizes):
         return masses(pos, members, sizes)
@@ -535,8 +629,27 @@ def main():
     xs = [p[0] for p in pos.values()]
     ys = [p[1] for p in pos.values()]
     zs = [p[2] for p in pos.values()]
-    # clearance to engine for final members
-    clr = min(seg_box_dist(pos[r["a"]], pos[r["b"]], ENGINE) - r["od"] / 2 for r in rows)
+    # clearance to engine for final members (tube surface to nearest clearance box)
+    gaps = {r["id"]: seg_engine_dist(pos[r["a"]], pos[r["b"]]) - r["od"] / 2 for r in rows}
+    clr = min(gaps.values())
+    bad = [(k, round(v, 1)) for k, v in gaps.items() if v < CLEAR - 1e-6]
+    if bad:
+        print("ENGINE CLEARANCE VIOLATIONS (final members):", bad)
+    # tube-to-tube clearance between members that do not share a node (a crossing would be a hidden joint)
+    mgap = []
+    for r1, r2 in itertools.combinations(rows, 2):
+        if {r1["a"], r1["b"]} & {r2["a"], r2["b"]}:
+            continue
+        d = seg_seg_dist(pos[r1["a"]], pos[r1["b"]], pos[r2["a"]], pos[r2["b"]]) - (r1["od"] + r2["od"]) / 2
+        mgap.append((round(d, 1), r1["id"], r2["id"]))
+    mgap.sort()
+    air_gap = min(seg_box_dist(pos[r["a"]], pos[r["b"]], KEEP_OUT["airbox"]) - r["od"] / 2 for r in rows)
+    if mgap and mgap[0][0] < 3.0:
+        bad.append(("tube-to-tube", mgap[0]))
+        print("TUBES TOO CLOSE / CROSSING:", mgap[:3])
+    if air_gap < 5.0:
+        bad.append(("airbox", round(air_gap, 1)))
+        print("TUBE INSIDE AIRBOX ZONE: gap %.1f" % air_gap)
     summary = {
         "nodes": len(names), "members": len(members), "rigidity_rank": rank, "isostatic_count": need,
         "redundant_members": len(members) - rank,
@@ -548,6 +661,22 @@ def main():
         "min_sf_buckle": round(min(r["sf_buckle"] for r in rows), 2),
         "failing_members": [r["id"] for r in fails],
         "min_gap_to_engine_mm": round(clr, 1),
+        "closest_to_engine": sorted([(k, round(v, 1)) for k, v in gaps.items()], key=lambda kv: kv[1])[:5],
+        "min_tube_to_tube_gap_mm": mgap[0][0] if mgap else None,
+        "closest_tube_pairs": [list(x) for x in mgap[:3]],
+        "min_gap_to_airbox_zone_mm": round(air_gap, 1),
+        "airbox_zone_mm": {k: list(v) for k, v in KEEP_OUT["airbox"].items()},
+        "removed_base_members": [[a, b, round(d, 1)] for a, b, d in blocked],
+        "added_members": [list(e) for e in added],
+        "engine": {
+            "origin_mm": [float(x) for x in ENGINE_ORIGIN],
+            "envelope_mm": {k: [round(float(v[0]), 1), round(float(v[1]), 1)] for k, v in ENGINE.items()},
+            "mount_y_mm": MOUNT_Y,
+            "wet_kg": ENGINE_IF["mass_wet_kg"], "extras_kg": ENGINE_EXTRA_KG, "drivetrain_allowance_kg": DRIVETRAIN_KG,
+            "kg_on_each_E": round(M_E, 2), "kg_on_each_F": round(M_F, 2),
+            "cg_vehicle_mm": [round(float(x), 1) for x in ENGINE_CG],
+            "front_share": round(float(_fE), 3),
+        },
         "cases": info,
         "extent_mm": {"x": [min(xs), max(xs)], "y": [min(ys), max(ys)], "z": [min(zs), max(zs)]},
         "u_max_mm": {c: sol["cases"][c]["u_max"] for c in loads},

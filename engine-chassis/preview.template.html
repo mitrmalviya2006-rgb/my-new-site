@@ -104,7 +104,7 @@ tr.row.sel td { background: color-mix(in srgb, var(--tension) 18%, transparent);
 <div class="wrap">
   <header>
     <h1>Truss Chassis Viewer</h1>
-    <p class="sub">Minimal triangulated motorcycle frame for a 349cc liquid-cooled single. The engine is a placeholder box; mount nodes E, F and P move when the real engine exists.</p>
+    <p class="sub">Minimal triangulated motorcycle frame with the real 349cc liquid-cooled single hung from two mount nodes on each side (E front, F rear). Tubes stay clear of the engine and of the airbox zone above it.</p>
   </header>
 
   <div class="grid">
@@ -131,7 +131,8 @@ tr.row.sel td { background: color-mix(in srgb, var(--tension) 18%, transparent);
           <button type="button" data-case="brake_1g">Braking 1 g</button>
         </div>
         <div class="checks">
-          <label class="chk"><input type="checkbox" id="t-engine" checked> Engine envelope (placeholder)</label>
+          <label class="chk"><input type="checkbox" id="t-engine" checked> Engine (349cc design) and mount spacers</label>
+          <label class="chk"><input type="checkbox" id="t-boxes"> Clearance boxes and airbox zone</label>
           <label class="chk"><input type="checkbox" id="t-wheels" checked> Wheels, swingarm, fork, shock</label>
           <label class="chk"><input type="checkbox" id="t-rider" checked> Rider triangle</label>
           <label class="chk"><input type="checkbox" id="t-labels"> Node labels</label>
@@ -160,7 +161,7 @@ tr.row.sel td { background: color-mix(in srgb, var(--tension) 18%, transparent);
     </div>
   </section>
 
-  <p class="note">Analysis treats every joint as a pin: members carry axial load only, and seat, tank, pegs, shock and engine load the nodes. Welded joints, lateral loads and cornering are not modelled, and the engine mounts are placeholders. A frame that carries a rider needs real FEA and physical testing first. Forces are in newtons, tension positive.</p>
+  <p class="note">Analysis treats every joint as a pin: members carry axial load only, and seat, tank, pegs, shock and engine load the nodes. Welded joints, lateral loads and cornering are not modelled, and the engine is treated as a dead weight on E and F: its leftover shake (about 1.1 tonnes-force at 15,000 rpm, mostly at twice engine speed) is not in these load cases, so use rubber or test the frame before riding. A frame that carries a rider needs real FEA and physical testing first. Forces are in newtons, tension positive.</p>
   <p class="files">Files: frame.step · frame.dxf · cutlist.csv · SPEC.md · frame.py</p>
 </div>
 
@@ -193,7 +194,7 @@ const V = (a) => new THREE.Vector3(a[0], a[1], a[2]);
 const N = {};
 for (const k in D.nodes) N[k] = V(D.nodes[k]);
 
-const groups = { frame: new THREE.Group(), engine: new THREE.Group(), wheels: new THREE.Group(), rider: new THREE.Group(), nodes: new THREE.Group() };
+const groups = { frame: new THREE.Group(), engine: new THREE.Group(), mounts: new THREE.Group(), boxes: new THREE.Group(), wheels: new THREE.Group(), rider: new THREE.Group(), nodes: new THREE.Group() };
 Object.values(groups).forEach((g) => scene.add(g));
 
 function between(a, b, r, mat, seg) {
@@ -229,19 +230,55 @@ for (const k in N) {
   s.position.copy(N[k]);
   groups.nodes.add(s);
 }
-// engine envelope
+// engine: outer-shell meshes (engine frame, moved to the vehicle by the crank-axis origin), mount spacers,
+// clearance boxes the frame was checked against, and the airbox zone that stays free of tubes
+const engineMat = new THREE.MeshStandardMaterial({ color: 0x139a86, roughness: 0.6, metalness: 0.15 });
+const mountMat = new THREE.MeshStandardMaterial({ color: 0xe08a1c, roughness: 0.5, metalness: 0.2 });
+const boxLine = new THREE.LineBasicMaterial({ color: 0x139a86 });
+const airLine = new THREE.LineDashedMaterial({ color: 0xd4470c, dashSize: 16, gapSize: 10 });
+function b64(s) { const bin = atob(s); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u.buffer; }
 {
-  const e = D.engine;
-  const size = [e.x[1] - e.x[0], e.y[1] - e.y[0], e.z[1] - e.z[0]];
-  const ctr = [(e.x[0] + e.x[1]) / 2, (e.y[0] + e.y[1]) / 2, (e.z[0] + e.z[1]) / 2];
-  const geo = new THREE.BoxGeometry(size[0], size[1], size[2]);
-  const mat = new THREE.MeshBasicMaterial({ color: 0x139a86, transparent: true, opacity: 0.16, depthWrite: false });
-  const box = new THREE.Mesh(geo, mat);
-  box.position.set(ctr[0], ctr[1], ctr[2]);
-  const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: 0x139a86 }));
-  edges.position.copy(box.position);
-  groups.engine.add(box, edges);
-  groups.engine.userData = { mat, edges };
+  const O = D.engine.origin;
+  groups.engine.position.set(O[0], O[1], O[2]);
+  for (const m of D.engine_meshes) {
+    const q = new Uint16Array(b64(m.v));
+    const pos = new Float32Array(q.length);
+    for (let i = 0; i < q.length; i += 3) { pos[i] = m.lo[0] + q[i] / 65535 * m.span[0]; pos[i + 1] = m.lo[1] + q[i + 1] / 65535 * m.span[1]; pos[i + 2] = m.lo[2] + q[i + 2] / 65535 * m.span[2]; }
+    const idx = m.it === "u2" ? new Uint16Array(b64(m.i)) : new Uint32Array(b64(m.i));
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    geo.setIndex(new THREE.BufferAttribute(idx, 1));
+    geo.computeVertexNormals();
+    groups.engine.add(new THREE.Mesh(geo, engineMat));
+  }
+  // mount spacers (engine ear -> frame lug plate) and the lug plates themselves
+  const Mt = D.engine.mounts;
+  const plateIn = Mt.mount_y - (14 + 3 + 1) - 3;       // inner face of the 6 mm lug plate (|y|)
+  for (const [name, xz] of [["E", Mt.E], ["F", Mt.F]]) {
+    for (const s of [1, -1]) {
+      const len = plateIn - Mt.ear_outer_y;
+      const sp = new THREE.Mesh(new THREE.CylinderGeometry(12, 12, len, 20), mountMat);
+      sp.position.set(xz[0], s * (Mt.ear_outer_y + len / 2), xz[1]);
+      groups.mounts.add(sp);
+      const pl = new THREE.Mesh(new THREE.BoxGeometry(70, 6, 90), mountMat);
+      pl.position.set(xz[0], s * (plateIn + 3), xz[1]);
+      groups.mounts.add(pl);
+    }
+  }
+  // clearance boxes (vehicle frame)
+  for (const n in D.engine.boxes) {
+    const b = D.engine.boxes[n];
+    const geo = new THREE.BoxGeometry(b.x[1] - b.x[0], b.y[1] - b.y[0], b.z[1] - b.z[0]);
+    const e = new THREE.LineSegments(new THREE.EdgesGeometry(geo), boxLine);
+    e.position.set((b.x[0] + b.x[1]) / 2, (b.y[0] + b.y[1]) / 2, (b.z[0] + b.z[1]) / 2);
+    groups.boxes.add(e);
+  }
+  const a = D.engine.airbox;
+  const ag = new THREE.BoxGeometry(a.x[1] - a.x[0], a.y[1] - a.y[0], a.z[1] - a.z[0]);
+  const ae = new THREE.LineSegments(new THREE.EdgesGeometry(ag), airLine);
+  ae.computeLineDistances();
+  ae.position.set((a.x[0] + a.x[1]) / 2, (a.y[0] + a.y[1]) / 2, (a.z[0] + a.z[1]) / 2);
+  groups.boxes.add(ae);
 }
 // wheels, swingarm, fork, shock
 const ghost = [];
@@ -310,6 +347,9 @@ function readTheme() {
   g.material.vertexColors = false;
   g.material.needsUpdate = true;
   nodeMat.color.copy(cInk);
+  engineMat.color.set(css("--engine"));
+  boxLine.color.set(css("--engine"));
+  airLine.color.set(css("--compress"));
   ghost.forEach((m) => m.color.set(css("--neutral")));
   recolor();
 }
@@ -344,7 +384,9 @@ function summary() {
     ["Min safety factor, yield", s.min_sf_yield.toFixed(2)],
     ["Min safety factor, buckling", s.min_sf_buckle.toFixed(2)],
     ["Max node movement, 3 g bump", s.u_max_mm.bump_3g.toFixed(2) + " mm"],
-    ["Gap to engine box", s.min_gap_to_engine_mm.toFixed(0) + " mm"],
+    ["Gap to engine (clearance boxes)", s.min_gap_to_engine_mm.toFixed(0) + " mm"],
+    ["Gap to airbox zone", s.min_gap_to_airbox_zone_mm.toFixed(0) + " mm"],
+    ["Load on each mount, front / rear", s.engine.kg_on_each_E.toFixed(0) + " / " + s.engine.kg_on_each_F.toFixed(0) + " kg"],
     ["Size", fmt(s.extent_mm.x[1] - s.extent_mm.x[0]) + " x " + fmt(s.extent_mm.y[1] - s.extent_mm.y[0]) + " x " + fmt(s.extent_mm.z[1] - s.extent_mm.z[0]) + " mm"],
   ];
   document.getElementById("summary").innerHTML = rows.map((r) => "<dt>" + r[0] + "</dt><dd>" + r[1] + "</dd>").join("");
@@ -363,7 +405,7 @@ function readout() {
     "<dt>Bump 3 g</dt><dd>" + f("bump_3g") + "</dd>" +
     "<dt>Braking 1 g</dt><dd>" + f("brake_1g") + "</dd>" +
     "<dt>SF yield</dt><dd>" + (m.sf_yield == null ? "n/a" : m.sf_yield.toFixed(1)) + "</dd>" +
-    "<dt>SF buckling</dt><dd>" + (m.sf_buckle == null ? "tension only" : m.sf_buckle.toFixed(1)) + "</dd></dl>";
+    "<dt>SF buckling</dt><dd>" + (m.sf_buckle == null ? "tension only" : m.sf_buckle > 100 ? ">100" : m.sf_buckle.toFixed(1)) + "</dd></dl>";
   document.querySelectorAll("tr.row").forEach((r) => r.classList.toggle("sel", +r.dataset.i === selected));
 }
 function buildTable() {
@@ -372,7 +414,7 @@ function buildTable() {
   tb.innerHTML = order.map((i) => {
     const m = D.members[i];
     return '<tr class="row" tabindex="0" data-i="' + i + '"><td>' + m.a + "–" + m.b + "</td><td>" + m.od + "x" + m.wall + "</td><td>" + m.len.toFixed(0) +
-      "</td><td>" + fmt(worst(m)) + "</td><td>" + (m.sf_yield == null ? "" : m.sf_yield.toFixed(1)) + "</td><td>" + (m.sf_buckle == null ? "" : m.sf_buckle.toFixed(1)) + "</td></tr>";
+      "</td><td>" + fmt(worst(m)) + "</td><td>" + (m.sf_yield == null ? "" : m.sf_yield.toFixed(1)) + "</td><td>" + (m.sf_buckle == null ? "" : m.sf_buckle > 100 ? ">100" : m.sf_buckle.toFixed(1)) + "</td></tr>";
   }).join("");
   tb.querySelectorAll("tr").forEach((r) => {
     const pick = () => { selected = selected === +r.dataset.i ? -1 : +r.dataset.i; recolor(); readout(); };
@@ -388,7 +430,8 @@ document.querySelectorAll("#cases button").forEach((b) => {
   });
 });
 function layer(id, fn) { const c = document.getElementById(id); const run = () => fn(c.checked); c.addEventListener("change", run); run(); }
-layer("t-engine", (v) => { groups.engine.visible = v; });
+layer("t-engine", (v) => { groups.engine.visible = v; groups.mounts.visible = v; });
+layer("t-boxes", (v) => { groups.boxes.visible = v; });
 layer("t-wheels", (v) => { groups.wheels.visible = v; scene.userData.grid.visible = v; });
 layer("t-rider", (v) => { groups.rider.visible = v; });
 let labelsOn = false;
