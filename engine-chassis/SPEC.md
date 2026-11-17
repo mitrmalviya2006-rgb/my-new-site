@@ -130,7 +130,8 @@ Cornering is not a separate case: at 1 g lateral the bike leans about 45 deg and
 
 - Total tube: 19 x 1.6 mm 12,295 mm, 28 x 2 mm 320 mm, 50 x 3 mm head tube 140 mm. Tube mass 9.3 kg.
 - `cutlist.csv` lists each member's centreline length, the cut length (axis pierce to pierce) and the included angle and mating tube at each end. Cope (fishmouth) each end onto the mating tube, trim to fit.
-- Plates, 6 mm mild steel, flat patterns in `frame.dxf`: engine lug 70 x 90, hole 13 (x8, four per side: E and F); swingarm pivot plate 110 x 150, hole 20 (x2); footpeg plate 50 x 60, hole 10 (x2); shock plate 60 x 80, hole 12 (x1). Also 4 spacer tubes 24 x 5.5 mm, about 49 mm long, and 4 M12 x 90 bolts with lock nuts. A local laser or CNC shop is fine; JLCCNC can cut the plates too. JLCCNC is not a tube-frame service.
+- Plates, 6 mm mild steel, flat patterns in `frame.dxf`: engine lug 70 x 90, hole 13 (x4: E and F on each side); swingarm pivot plate 110 x 150, hole 20 (x2); footpeg plate 50 x 60, hole 10 (x2); shock plate 60 x 80, hole 12 (x1). Also 4 spacer tubes 24 x 5.5 mm, about 49 mm long, and 4 M12 x 90 bolts with lock nuts. A local laser or CNC shop is fine; JLCCNC can cut the plates too. JLCCNC is not a tube-frame service.
+- Where to get it built, what to send and how to ask for quotes: see `FABRICATION.md`.
 - Order: tack the two head nodes and the pivot tube in a flat jig first, then build each side, then the cross tubes (D-D, C-C) and the M node, then weld out. Hang the real engine (or a wooden template of it) from the E and F plates **before** final welding so the plates line up with the ears. Check diagonals and the node positions against `frame.step` first.
 - Rough cost guess, not sourced: tube about 10 kg of steel, plates a few hundred rupees, welding and jig the main cost; plan roughly Rs 8,000 to 20,000 at a local workshop.
 
@@ -154,6 +155,7 @@ Cornering is not a separate case: at 1 g lateral the bike leans about 45 deg and
 | `check_fit.py, fit_check.json` | solid-to-solid check of the frame against the engine STEP |
 | `topology_search.py` | annealing search that chose the 39-bar set |
 | `results.json, preview_data.json` | solver output |
+| `FABRICATION.md` | where to get the frame built, quote request text, fabricator checklist |
 | `gen_spec.py` | writes this file |
 
 Regenerate: `python frame.py && python check_fit.py && python build_preview.py && python gen_spec.py` (needs numpy, cadquery, ezdxf; run `../engine-design/build.py` first).
