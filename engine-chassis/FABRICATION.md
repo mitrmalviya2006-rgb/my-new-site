@@ -13,6 +13,8 @@ Get two or three written quotes. The earlier Rs 8,000 to 20,000 figure was a gue
 
 ## What to send
 
+The complete, cut-ready pack is in `make-pack/` (start with `make-pack/README.md`): coped 3D model, per-tube files, tube table, notch templates, dimensioned drawings, plates, BOM, jig table and a checklist. Send that folder. The table below describes the older files.
+
 | File | Use |
 |---|---|
 | `frame.step` | 3D model (tubes are node-to-node cylinders, not yet coped; engine boxes are only for reference) |

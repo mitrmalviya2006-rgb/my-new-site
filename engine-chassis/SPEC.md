@@ -156,6 +156,7 @@ Cornering is not a separate case: at 1 g lateral the bike leans about 45 deg and
 | `topology_search.py` | annealing search that chose the 39-bar set |
 | `results.json, preview_data.json` | solver output |
 | `FABRICATION.md` | where to get the frame built, quote request text, fabricator checklist |
+| `make-pack/` | cut-ready 3D model, coped tube files, notch templates, drawings, plates, BOM, jig table (make_pack.py, verify_pack.py) |
 | `gen_spec.py` | writes this file |
 
 Regenerate: `python frame.py && python check_fit.py && python build_preview.py && python gen_spec.py` (needs numpy, cadquery, ezdxf; run `../engine-design/build.py` first).

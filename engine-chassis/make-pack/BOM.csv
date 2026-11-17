@@ -1,0 +1,13 @@
+item,qty,size / note,stock,mass
+Tube ERW mild steel 19x1.6 mm,37,12116 mm cut lengths in total,"3 x 6 m stock length(s) (first-fit nesting, 3 mm kerf)",8.32 kg
+Tube ERW mild steel 28x2 mm,1,320 mm cut lengths in total,"1 x 6 m stock length(s) (first-fit nesting, 3 mm kerf)",0.41 kg
+Tube ERW mild steel 50x3 mm,1,140 mm cut lengths in total,"1 x 6 m stock length(s) (first-fit nesting, 3 mm kerf)",0.49 kg
+"Plate LUG (E) mild steel, laser cut from plates.dxf",2,125 x 130 x 6 mm,,0.77 kg each (before holes)
+"Plate LUG (F) mild steel, laser cut from plates.dxf",2,100 x 150 x 6 mm,,0.71 kg each (before holes)
+"Plate PIVOT (D) mild steel, laser cut from plates.dxf",2,110 x 165 x 6 mm,,0.85 kg each (before holes)
+"Plate PEG (P) mild steel, laser cut from plates.dxf",2,50 x 60 x 6 mm,,0.14 kg each (before holes)
+"Plate SHOCK (M) mild steel, laser cut from plates.dxf",1,60 x 80 x 6 mm,,0.23 kg each (before holes)
+Spacer tube 24/13 mm,4,49.0 mm long (cut square),,0.12 kg each
+Bolt M12 x 90 (grade 8.8) with lock nut and 2 washers,4,"engine mounts E and F, both sides",,
+Filler wire / rod for mild steel (ER70S-6 or equivalent),1,about 0.5 kg,,
+Powder coat or paint,1,after weld inspection,,

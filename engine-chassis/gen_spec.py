@@ -114,7 +114,7 @@ for f, t in [("frame.py", "parametric generator, solver and exporter (reads ../e
              ("cutlist.csv", "tube cut list"), ("preview.html / preview.template.html", "3D viewer with the real engine (`build_preview.py` injects `preview_data.json` and the engine meshes)"),
              ("check_fit.py, fit_check.json", "solid-to-solid check of the frame against the engine STEP"),
              ("topology_search.py", "annealing search that chose the 39-bar set"),
-             ("results.json, preview_data.json", "solver output"), ("FABRICATION.md", "where to get the frame built, quote request text, fabricator checklist"), ("gen_spec.py", "writes this file")]:
+             ("results.json, preview_data.json", "solver output"), ("FABRICATION.md", "where to get the frame built, quote request text, fabricator checklist"), ("make-pack/", "cut-ready 3D model, coped tube files, notch templates, drawings, plates, BOM, jig table (make_pack.py, verify_pack.py)"), ("gen_spec.py", "writes this file")]:
     a("| `%s` | %s |" % (f, t))
 a("\nRegenerate: `python frame.py && python check_fit.py && python build_preview.py && python gen_spec.py` (needs numpy, cadquery, ezdxf; run `../engine-design/build.py` first).")
 open(os.path.join(d, "SPEC.md"), "w").write("\n".join(L) + "\n")

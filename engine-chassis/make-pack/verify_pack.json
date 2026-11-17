@@ -1,0 +1,11 @@
+{
+ "tubes": 39,
+ "plates_spacers": 13,
+ "invalid": [],
+ "max_tube_overlap_mm3": 120.61,
+ "overlap_pair": [
+  "TUBE_HT-HB",
+  "TUBE_HB-EL"
+ ],
+ "members_present": true
+}
