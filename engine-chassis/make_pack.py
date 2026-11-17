@@ -4,7 +4,7 @@ Make-the-chassis pack: cut-ready 3D model and everything a fabricator needs.
 
 Run after frame.py:   python make_pack.py        (needs numpy, cadquery, ezdxf, matplotlib)
 Writes make-pack/:
-  chassis_cut_ready.step   every tube coped at both ends (separate named solids), plates with tube holes, spacers, engine boxes
+  chassis_cut_ready.step   every tube coped at both ends (separate named solids), plates with tube holes, spacers (frame only)
   tubes/<id>.step          one coped tube each, straight along Z in its own frame (for tube-laser shops)
   tubes/<id>.dxf           the unrolled (flat) tube with both coped ends
   plates.dxf               plate flat patterns with the tube holes
@@ -51,6 +51,7 @@ for r in rows:
     at_node.setdefault(r["a"], []).append(r)
     at_node.setdefault(r["b"], []).append(r)
 
+SHOW_ENGINE_REF = False        # the pack is the frame only; set True to add the engine clearance boxes to the STEP and the drawings
 PLATE_KINDS = {"LUG": (70, 90, 6, 13), "PIVOT": (110, 150, 6, 0), "PEG": (50, 60, 6, 10), "SHOCK": (60, 80, 6, 12)}
 T_PL = 6.0
 R_OUT = fr.TUBES["M"][0] / 2 + T_PL / 2 + 1       # plate centre sits this far inboard of its node (as in frame.py)
@@ -261,7 +262,7 @@ def build_cad():
         for n in ("E", "F"):
             sp, spacer_len = spacer_solid(n + sfx, s)
             assy.add(sp, name="SPACER_%s%s" % (n, sfx), color=cq.Color(0.9, 0.55, 0.1, 1))
-    for bname, b in fr.ENGINE_BOXES.items():
+    for bname, b in (fr.ENGINE_BOXES.items() if SHOW_ENGINE_REF else []):
         assy.add(cq.Solid.makeBox(b["x"][1] - b["x"][0], b["y"][1] - b["y"][0], b["z"][1] - b["z"][0], cq.Vector(b["x"][0], b["y"][0], b["z"][0])),
                  name="REFERENCE_ENGINE_BOX_%s" % bname, color=cq.Color(0.2, 0.5, 0.9, 0.3))
     assy.save(os.path.join(OUT, "chassis_cut_ready.step"))
@@ -528,7 +529,7 @@ def draw_view(ax, view, label_all=False):
     for r in rows:
         a, b = pr(pos[r["a"]]), pr(pos[r["b"]])
         ax.plot([a[0], b[0]], [a[1], b[1]], "-", color="0.15" if r["size"] != "S" else "0.35", lw={"S": 1.1, "M": 2.2, "H": 3.0}[r["size"]], solid_capstyle="round")
-    for bname, bx in fr.ENGINE_BOXES.items():
+    for bname, bx in (fr.ENGINE_BOXES.items() if SHOW_ENGINE_REF else []):
         lo, hi = pr((bx["x"][0], bx["y"][0], bx["z"][0])), pr((bx["x"][1], bx["y"][1], bx["z"][1]))
         ax.plot([lo[0], hi[0], hi[0], lo[0], lo[0]], [lo[1], lo[1], hi[1], hi[1], lo[1]], "--", color="tab:blue", lw=0.4)
     for n, p in pos.items():
@@ -559,7 +560,7 @@ lines = [
     "CUTTING: cut each tube square to the LONG SIDE length in tube_table.csv, then cope the ends with the 1:1 templates (notch_templates.pdf) or from tubes/*.step on a tube laser.",
     "COPING RULE: a tube is coped onto the larger tube at the node, or onto the lower-numbered tube of equal size (see 'coped onto' in tube_table.csv). Tubes that leave a node on the far side are not coped to each other.",
     "WELDING: full-perimeter welds, no gaps over 1 mm at fit-up. Jig: build on a flat table with node posts (jig_table.csv); check the diagonals on sheet 5 before final welding.",
-    "ENGINE MOUNTS: engine ears (14 mm holes, ear faces at |y| = 82) bolt with M12 x 90 through a 24/13 mm spacer (about 49 mm) and a 6 mm frame plate at E and F. Hang an engine template before welding the plates.",
+    "ENGINE MOUNTS (the engine itself is not part of this pack): engine ears (14 mm holes, ear faces at |y| = 82) bolt with M12 x 90 through a 24/13 mm spacer (about 49 mm) and a 6 mm frame plate at E and F. Hang an engine template before welding the plates.",
     "OPEN DETAILS (not designed): shock mount at M is a placeholder plate (a real shock needs a clevis of two plates); swingarm pivot bearings and bolt length; footpeg and brake pedal brackets; seat, tank and bodywork mounts.",
     "ENGINE SHAKE (about 1.1 tonnes-force at 15,000 rpm, mostly at twice engine speed) is not in the analysis: use rubber-bushed mounts or test at low rpm first.",
     "ANALYSIS: pin-jointed static truss (static 1 g, bump 3 g, braking 1 g), minimum safety factor 3.16 (yield) and 6.01 (buckling). No weld, fatigue, lateral or crash analysis.",
@@ -584,9 +585,6 @@ bg.text(262, PH - 36, "Node coordinates (mm)", fontsize=8, weight="bold")
 bg.text(262, PH - 42, "node      x        y        z   role", fontsize=6.5, family="monospace")
 for i, (n, p) in enumerate(pos.items()):
     bg.text(262, PH - 48 - 5.2 * i, "%-5s %7.1f %8.1f %8.1f   %s" % (n, p[0], p[1], p[2], role.get(n if n in ("HT", "HB", "M") else n[0], "")), fontsize=6.5, family="monospace")
-bg.text(262, 60, "Engine crank axis in this frame: x %.0f, y %.0f, z %.0f" % tuple(fr.ENGINE_ORIGIN), fontsize=6.5)
-bg.text(262, 54, "Engine CG: x %.0f, y %.0f, z %.0f (wet %.1f kg)" % (*fr.ENGINE_CG, fr.ENGINE_IF["mass_wet_kg"]), fontsize=6.5)
-bg.text(262, 48, "Blue dashed boxes = engine clearance boxes (reference only).", fontsize=6.5)
 dpdf.savefig(fig)
 plt.close(fig)
 
