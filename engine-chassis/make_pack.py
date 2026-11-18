@@ -503,10 +503,28 @@ def dpage(title, sheet):
     bg.set_ylim(0, PH)
     bg.axis("off")
     bg.plot([8, PW - 8, PW - 8, 8, 8], [8, 8, PH - 8, PH - 8, 8], "k-", lw=0.8)
-    bg.plot([8, PW - 8], [24, 24], "k-", lw=0.6)
-    bg.text(12, 15, "Truss chassis for the 349cc single - prototype - all dimensions in mm, frame axes x forward, y left, z up, origin = swingarm pivot centre", fontsize=7)
-    bg.text(12, 10.5, "Mild steel ERW tube, TIG/MIG welded, node positions +-1 mm. Not a certified motorcycle frame: weld inspection and a physical load test are required before riding.", fontsize=6)
-    bg.text(PW - 12, 15, "Sheet %s" % sheet, fontsize=8, ha="right")
+    bg.plot([8, PW - 8], [34, 34], "k-", lw=0.6)
+    for xx in (150, 230, 290, 340):
+        bg.plot([xx, xx], [8, 34], "k-", lw=0.4)
+    bg.plot([8, PW - 8], [21, 21], "k-", lw=0.4)
+    bg.text(11, 28, "TITLE", fontsize=4.5, color="0.4")
+    bg.text(11, 23.5, "Truss chassis, 349cc single, prototype", fontsize=8, weight="bold")
+    bg.text(11, 17.5, "Mild steel ERW tube 19x1.6 / 28x2 / 50x3, plate 6 mm. TIG or MIG welded.", fontsize=5.5)
+    bg.text(11, 12.5, "Not a certified motorcycle frame: weld inspection and a load test are required before riding.", fontsize=5.5)
+    bg.text(153, 28, "DRAWING NO.", fontsize=4.5, color="0.4")
+    bg.text(153, 23.5, "CH-001", fontsize=9, weight="bold")
+    bg.text(153, 12.5, "Units: mm   Axes: x forward, y left, z up", fontsize=5.5)
+    bg.text(153, 17.5, "Origin: swingarm pivot centre", fontsize=5.5)
+    bg.text(233, 28, "SCALE", fontsize=4.5, color="0.4")
+    bg.text(233, 23.5, "1:4 (views)", fontsize=7.5)
+    bg.text(233, 12.5, "Projection: third angle", fontsize=5.5)
+    bg.text(293, 28, "TOLERANCE", fontsize=4.5, color="0.4")
+    bg.text(293, 23.5, "ISO 2768-m; nodes +-1", fontsize=6.5)
+    bg.text(293, 12.5, "Weld: ISO 5817 level C", fontsize=5.5)
+    bg.text(343, 28, "REV / DATE", fontsize=4.5, color="0.4")
+    bg.text(343, 23.5, "A  2026-11-18", fontsize=7.5)
+    bg.text(343, 17.5, "Sheet %s" % sheet, fontsize=8, weight="bold")
+    bg.text(343, 12.5, "Designed by Claude (AI), unchecked", fontsize=5)
     bg.text(12, PH - 16, title, fontsize=11, weight="bold")
     return fig, bg
 
@@ -678,6 +696,46 @@ dpdf.savefig(fig)
 plt.close(fig)
 dpdf.close()
 print("drawings.pdf written")
+
+
+# ------------------------------------------------------------------ welded single-body STEP (for SolidWorks: one part, tubes + plates fused)
+try:
+    parts_ = [solids[r["id"]] for r in rows] + [plate_solid(pl) for pl in plates] + [spacer_solid(n + sfx, 1 if sfx == "L" else -1)[0] for sfx in "LR" for n in ("E", "F")]
+    body = parts_[0].fuse(*parts_[1:]).clean()
+    vol_sum = sum(p.Volume() for p in parts_)
+    print("welded body: valid=%s solids=%d volume %.0f mm3 (sum of parts %.0f)" % (body.isValid(), len(body.Solids()), body.Volume(), vol_sum))
+    cq.exporters.export(cq.Workplane("XY").newObject([body]), os.path.join(OUT, "chassis_welded_single_body.step"))
+except Exception as ex:
+    print("welded body failed:", ex)
+
+# ------------------------------------------------------------------ drawing_views.dxf: 2D views at 1:1 with dimensions (opens in SolidWorks drawings / any CAD)
+doc = ezdxf.new("R2010", setup=True)
+doc.units = ezdxf.units.MM
+for lay, col in (("TUBE_19", 7), ("TUBE_28", 2), ("TUBE_50", 6), ("NODES", 1), ("TEXT", 8), ("DIM", 3)):
+    doc.layers.add(lay, color=col)
+msp = doc.modelspace()
+GAP = 150.0
+views = {"SIDE (x,z)": (lambda p: (p[0], p[2]), (0.0, 0.0)),
+         "TOP (x,y)": (lambda p: (p[0], p[1]), (0.0, -(max(zs) - min(zs)) - (max(ys) - min(ys)) - 2 * GAP)),
+         "FRONT (y,z)": (lambda p: (p[1], p[2]), (max(xs) - min(xs) + 2 * GAP + (max(ys) - min(ys)), 0.0))}
+for vname, (pr, off) in views.items():
+    for r in rows:
+        a, b = pr(pos[r["a"]]), pr(pos[r["b"]])
+        msp.add_line((a[0] + off[0], a[1] + off[1]), (b[0] + off[0], b[1] + off[1]), dxfattribs={"layer": "TUBE_%d" % int(r["od"])})
+    for n, p in pos.items():
+        q = pr(p)
+        msp.add_circle((q[0] + off[0], q[1] + off[1]), 5, dxfattribs={"layer": "NODES"})
+        msp.add_text("%s (%.0f, %.0f)" % (n, q[0], q[1]), height=8, dxfattribs={"layer": "TEXT", "insert": (q[0] + off[0] + 8, q[1] + off[1] + 8)})
+    allq = [pr(p) for p in pos.values()]
+    lo_x, hi_x = min(q[0] for q in allq), max(q[0] for q in allq)
+    lo_y, hi_y = min(q[1] for q in allq), max(q[1] for q in allq)
+    msp.add_text(vname + "  scale 1:1, tubes centreline", height=14, dxfattribs={"layer": "TEXT", "insert": (lo_x + off[0], hi_y + off[1] + 60)})
+    d1 = msp.add_linear_dim(base=(lo_x + off[0], hi_y + off[1] + 40), p1=(lo_x + off[0], hi_y + off[1]), p2=(hi_x + off[0], hi_y + off[1]), dimstyle="EZDXF", override={"dimtxt": 8, "dimasz": 6}, dxfattribs={"layer": "DIM"})
+    d1.render()
+    d2 = msp.add_linear_dim(base=(hi_x + off[0] + 50, lo_y + off[1]), p1=(hi_x + off[0], lo_y + off[1]), p2=(hi_x + off[0], hi_y + off[1]), angle=90, dimstyle="EZDXF", override={"dimtxt": 8, "dimasz": 6}, dxfattribs={"layer": "DIM"})
+    d2.render()
+doc.saveas(os.path.join(OUT, "drawing_views.dxf"))
+print("drawing_views.dxf written")
 
 json.dump(dict(tube_long_check_worst_mm=worst, tube_mass_kg=tot_mass, plate_mass_kg=pl_mass, spacer_len_mm=SPACER_LEN,
                plates=[dict(kind=p["kind"], node=p["node"], w=p["w"], h=p["h"], t=p["t"], holes=len(p["holes"])) for p in plates],
